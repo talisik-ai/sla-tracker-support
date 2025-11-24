@@ -1,13 +1,17 @@
 # Jira SLA Tracker - Setup Instructions
 
+> **Quality Gates Active**: This project uses automated pre-commit hooks to ensure code quality.
+
 ## Quick Start
 
 1. **Install Dependencies**
+
    ```bash
    npm install
    ```
 
 2. **Set Up Environment Variables** (Optional - app works with mock data)
+
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your Jira credentials
@@ -19,6 +23,7 @@
    - See "Environment Configuration" section below
 
 4. **Run Development Server**
+
    ```bash
    npm run dev
    ```
@@ -34,6 +39,7 @@
 ## Environment Configuration
 
 ### Working with Mock Data (Default)
+
 The application works perfectly out-of-the-box with mock data - **no configuration needed**!
 
 ### Connecting to Real Jira (Optional)
@@ -44,11 +50,13 @@ The application works perfectly out-of-the-box with mock data - **no configurati
    - Copy the generated token
 
 2. **Copy environment template**
+
    ```bash
    cp .env.example .env.local
    ```
 
 3. **Fill in your Jira credentials in `.env.local`**
+
    ```bash
    VITE_JIRA_INSTANCE_URL=https://yourcompany.atlassian.net
    VITE_JIRA_EMAIL=your-email@example.com
@@ -62,9 +70,11 @@ The application works perfectly out-of-the-box with mock data - **no configurati
    ```
 
 ### Switching Projects
+
 You can change the project key anytime in **Settings** → **Jira Project** section.
 
 ### Security Notes
+
 - ⚠️ **Never commit `.env.local` to git** (it's already in `.gitignore`)
 - 🔒 Keep your API tokens secure
 - 🔄 Rotate tokens regularly for security
@@ -72,12 +82,14 @@ You can change the project key anytime in **Settings** → **Jira Project** sect
 ## Features
 
 ### Dashboard (`/dashboard`)
+
 - Real-time SLA metrics
 - Critical issues list with countdown timers
 - At-risk issues tracking
 - Auto-refresh every 30 seconds
 
 ### Developer Performance (`/developers`)
+
 - Per-developer workload breakdown
 - Priority distribution
 - SLA compliance tracking
@@ -131,6 +143,7 @@ npm run test:coverage
 ```
 
 ### Test Coverage
+
 - ✅ SLA calculation logic (12+ tests)
 - ✅ Critical priority handling
 - ✅ Resolution tracking
@@ -140,9 +153,11 @@ npm run test:coverage
 ## Troubleshooting
 
 ### "Buffer is not defined" Error
+
 This has been fixed in the latest version. The application now uses browser-compatible `btoa()` for base64 encoding instead of Node.js `Buffer`. Make sure your dev server has restarted to pick up the changes.
 
 ### Mock Data vs Live Data
+
 - By default, the application uses mock data
 - To switch to live Jira data, configure `.env.local` with your credentials
 - The application will automatically try live data first and fall back to mock data if credentials are missing or invalid
