@@ -246,11 +246,11 @@ function DashboardPage() {
     }
 
     return (
-        <div className="p-8 space-y-8">
-            <div className="flex justify-between items-center">
+        <div className="p-4 md:p-8 space-y-4 md:space-y-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                    <div className="text-sm font-medium text-muted-foreground mb-1 flex items-center gap-2">
-                        <span>{projectInfo ? `${projectInfo.name} (${projectInfo.id})` : 'Loading project info...'}</span>
+                    <div className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 flex items-center gap-2 flex-wrap">
+                        <span className="truncate">{projectInfo ? `${projectInfo.name} (${projectInfo.id})` : 'Loading project info...'}</span>
                         {/* Real-time connection indicator */}
                         {isConnected && (
                             <span className="flex items-center gap-1 text-green-600 text-xs">
@@ -262,16 +262,18 @@ function DashboardPage() {
                             </span>
                         )}
                     </div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
                 </div>
                 <Button
                     variant="outline"
                     size="sm"
                     onClick={() => loadData()}
                     disabled={isRefreshing}
+                    className="w-full sm:w-auto"
                 >
                     <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                    {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+                    <span className="hidden sm:inline">{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
+                    <span className="sm:hidden">Refresh</span>
                 </Button>
             </div>
 
@@ -283,7 +285,7 @@ function DashboardPage() {
             )}
 
             {/* Metrics Grid */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-5">
                 <MetricCard
                     title="Total Issues"
                     value={<AnimatedValue value={stats.total} /> as any}
@@ -322,8 +324,8 @@ function DashboardPage() {
 
             {/* Analytics Charts */}
             <div className="space-y-4">
-                <h2 className="text-2xl font-bold tracking-tight">Analytics</h2>
-                <div className="grid gap-4 md:grid-cols-2">
+                <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Analytics</h2>
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                     <IssueStatusChart data={issueStatusData} />
                     <ResponseTimeChart data={responseTimeData} />
                 </div>

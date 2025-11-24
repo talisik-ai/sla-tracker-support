@@ -11,9 +11,9 @@ export function DeveloperGrid({ developers }: DeveloperGridProps) {
     const averages = getTeamAverages(developers)
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
             {/* Team Overview */}
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Team Members</CardTitle>
@@ -64,8 +64,8 @@ export function DeveloperGrid({ developers }: DeveloperGridProps) {
 
             {/* Developer Grid */}
             <div>
-                <h2 className="text-xl font-semibold mb-4">Individual Performance</h2>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Individual Performance</h2>
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {developers.map(dev => (
                         <DeveloperCard
                             key={dev.accountId}

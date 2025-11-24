@@ -134,11 +134,11 @@ function SettingsPage() {
     }
 
     return (
-        <div className="p-8 space-y-8 max-w-5xl mx-auto">
-            <div className="flex justify-between items-center">
+        <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-5xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-                    <p className="text-muted-foreground">Configure SLA rules, business hours, and holidays</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Settings</h1>
+                    <p className="text-sm text-muted-foreground">Configure SLA rules, business hours, and holidays</p>
                 </div>
                 <Button variant="outline" onClick={resetSettings} className="text-destructive hover:text-destructive">
                     <RotateCcw className="mr-2 h-4 w-4" />
@@ -148,8 +148,8 @@ function SettingsPage() {
 
             {/* SLA Rules Configuration */}
             <div className="space-y-4">
-                <h2 className="text-xl font-semibold">SLA Rules by Priority</h2>
-                <div className="grid gap-6 md:grid-cols-2">
+                <h2 className="text-lg sm:text-xl font-semibold">SLA Rules by Priority</h2>
+                <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2">
                     {Object.entries(rules).map(([priority, rule]) => (
                         <Card key={priority}>
                             <CardHeader className="pb-3">
@@ -243,7 +243,7 @@ function SettingsPage() {
                     {/* Custom Fields Info */}
                     <div className="space-y-2">
                         <Label>Configured Custom Fields</Label>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                             <div className="p-3 bg-muted rounded-md">
                                 <span className="block font-medium text-xs text-muted-foreground">SLA Due Date</span>
                                 <code className="text-xs">{JIRA_CUSTOM_FIELDS.SLA_DUE_DATE}</code>
