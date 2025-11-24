@@ -1,9 +1,9 @@
 # Product Requirements Document (PRD)
-# Salina Jira SLA Tracking System
+# Jira SLA Tracking System
 
 **Version:** 1.0  
 **Date:** November 17, 2025  
-**Project Code Name:** Salina SLA Tracker  
+**Project Code Name:** Jira SLA Tracker  
 **Target Release:** Phase 1 MVP - 3 weeks  
 
 ---
@@ -11,7 +11,7 @@
 ## 1. Executive Summary
 
 ### 1.1 Product Overview
-Build a standalone web application that monitors and tracks Service Level Agreements (SLAs) for Jira issues in the Salina project. The system will provide real-time SLA monitoring, developer performance tracking, and automated alerting to ensure compliance with response and resolution time commitments.
+Build a standalone web application that monitors and tracks Service Level Agreements (SLAs) for Jira issues in any project. The system will provide real-time SLA monitoring, developer performance tracking, and automated alerting to ensure compliance with response and resolution time commitments.
 
 ### 1.2 Problem Statement
 - Native Jira lacks granular SLA tracking without Jira Service Management (additional cost)
@@ -837,7 +837,7 @@ interface DeveloperCardProps {
 
 ### 9.1 File Structure
 ```
-salina-sla-tracker/
+jira-sla-tracker/
 ├── app/
 │   ├── routes/
 │   │   ├── __root.tsx                 # Root layout with nav
@@ -933,7 +933,7 @@ salina-sla-tracker/
 ### 9.2 Environment Variables
 ```bash
 # .env.local
-VITE_APP_NAME="Salina SLA Tracker"
+VITE_APP_NAME="Jira SLA Tracker"
 VITE_APP_VERSION="1.0.0"
 
 # Jira Configuration
@@ -1298,7 +1298,7 @@ export async function searchIssues(
 }
 
 /**
- * Get all issues for the Salina project
+ * Get all issues for the project
  */
 export async function getAllProjectIssues(): Promise<JiraIssue[]> {
   const jql = `project = "${PROJECT_KEY}" ORDER BY created DESC`;
@@ -1592,7 +1592,7 @@ export async function addComment(issueKey: string, comment: string) {
 - **Breached:** Issue exceeded 100% of allocated SLA time
 
 ### 15.2 Reference Documents
-- Salina SLA Policy (QA-BR-003 v1.2)
+- Your Organization's SLA Policy
 - Jira REST API Documentation: https://developer.atlassian.com/cloud/jira/platform/rest/v3/
 - TanStack Start Documentation: https://tanstack.com/start/latest
 - shadcn/ui Documentation: https://ui.shadcn.com/
