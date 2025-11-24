@@ -1,8 +1,8 @@
 import axios from 'axios';
 import type { JiraIssue, JiraSearchResponse } from './types';
 
-// Project key can remain client-side for building JQL queries
-export const PROJECT_KEY = import.meta.env.VITE_JIRA_PROJECT_KEY || 'SAL';
+// Default project key from environment (used as fallback only)
+const DEFAULT_PROJECT_KEY = import.meta.env.VITE_JIRA_PROJECT_KEY || 'SAL';
 
 
 /**
@@ -36,7 +36,6 @@ export async function searchIssues(
 
     // Call the local server proxy endpoint instead of Jira directly
     console.log('[Client API] searchIssues called with JQL:', jql)
-    console.log('[Client API] Current PROJECT_KEY:', PROJECT_KEY)
     const response = await axios.get<JiraSearchResponse>(
         '/api/jira/search',
         {
@@ -55,21 +54,23 @@ export async function searchIssues(
 
 /**
  * Build JQL for project key
- * @param projectKey - Project key to query (optional, uses default if not provided)
+ * @param projectKey - Project key to query (required)
  * @returns JQL string for project filter
  */
-export function buildProjectJQL(projectKey?: string): string {
-    const key = projectKey || PROJECT_KEY
-    return `project = "${key}"`
+export function buildProjectJQL(projectKey: string): string {
+    return `project = "${projectKey}"`
 }
 
 /**
  * Get all issues for the project
+ * @param projectKey - The Jira project key (required, no fallback)
  */
-export async function getAllProjectIssues(projectKey?: string): Promise<JiraIssue[]> {
-    const key = projectKey || PROJECT_KEY;
-    console.log(`[API] getAllProjectIssues called with key: "${key}" (arg: "${projectKey}", default: "${PROJECT_KEY}")`);
-    const jql = `project = "${key}" ORDER BY created DESC`;
+export async function getAllProjectIssues(projectKey: string): Promise<JiraIssue[]> {
+    if (!projectKey) {
+        throw new Error('Project key is required. Please configure it in Settings.');
+    }
+    console.log(`[API] getAllProjectIssues called with key: "${projectKey}"`);
+    const jql = `project = "${projectKey}" ORDER BY created DESC`;
     // Reduced maxResults to 100 to prevent timeouts/errors on developers page
     const response = await searchIssues(jql, { maxResults: 100 });
     return response.issues;
@@ -77,38 +78,57 @@ export async function getAllProjectIssues(projectKey?: string): Promise<JiraIssu
 
 /**
  * Get open issues (not resolved)
+ * @param projectKey - The Jira project key (required)
  */
-export async function getOpenIssues(): Promise<JiraIssue[]> {
-    const jql = `project = "${PROJECT_KEY}" AND status != Done AND status != Resolved AND status != Closed ORDER BY priority DESC, created ASC`;
+export async function getOpenIssues(projectKey: string): Promise<JiraIssue[]> {
+    if (!projectKey) {
+        throw new Error('Project key is required. Please configure it in Settings.');
+    }
+    const jql = `project = "${projectKey}" AND status != Done AND status != Resolved AND status != Closed ORDER BY priority DESC, created ASC`;
     const response = await searchIssues(jql);
     return response.issues;
 }
 
 /**
  * Get critical priority issues
+ * @param projectKey - The Jira project key (required)
  */
-export async function getCriticalIssues(): Promise<JiraIssue[]> {
-    const jql = `project = "${PROJECT_KEY}" AND priority = Critical AND status != Done ORDER BY created ASC`;
+export async function getCriticalIssues(projectKey: string): Promise<JiraIssue[]> {
+    if (!projectKey) {
+        throw new Error('Project key is required. Please configure it in Settings.');
+    }
+    const jql = `project = "${projectKey}" AND priority = Critical AND status != Done ORDER BY created ASC`;
     const response = await searchIssues(jql);
     return response.issues;
 }
 
 /**
  * Get issues by priority
+ * @param projectKey - The Jira project key (required)
+ * @param priority - Issue priority level
  */
 export async function getIssuesByPriority(
+    projectKey: string,
     priority: 'Critical' | 'High' | 'Medium' | 'Low'
 ): Promise<JiraIssue[]> {
-    const jql = `project = "${PROJECT_KEY}" AND priority = ${priority} AND status != Done ORDER BY created ASC`;
+    if (!projectKey) {
+        throw new Error('Project key is required. Please configure it in Settings.');
+    }
+    const jql = `project = "${projectKey}" AND priority = ${priority} AND status != Done ORDER BY created ASC`;
     const response = await searchIssues(jql);
     return response.issues;
 }
 
 /**
  * Get issues assigned to a developer
+ * @param projectKey - The Jira project key (required)
+ * @param accountId - Jira account ID of the developer
  */
-export async function getIssuesByAssignee(accountId: string): Promise<JiraIssue[]> {
-    const jql = `project = "${PROJECT_KEY}" AND assignee = "${accountId}" ORDER BY priority DESC, created ASC`;
+export async function getIssuesByAssignee(projectKey: string, accountId: string): Promise<JiraIssue[]> {
+    if (!projectKey) {
+        throw new Error('Project key is required. Please configure it in Settings.');
+    }
+    const jql = `project = "${projectKey}" AND assignee = "${accountId}" ORDER BY priority DESC, created ASC`;
     const response = await searchIssues(jql);
     return response.issues;
 }

@@ -108,9 +108,6 @@ export function calculateSLA(issue: JiraIssue, settings?: SLASettings): SLAData 
     };
 }
 
-export function calculateDeveloperPerformance(
-    _issues: Array<{ issue: JiraIssue; sla: SLAData }>
-): Map<string, any> {
-    // Placeholder for now, will implement fully later
-    return new Map();
-}
+// Developer performance calculation moved to separate file
+// Import from: @/lib/sla/developer-performance
+// This keeps the calculator focused on SLA calculations only
