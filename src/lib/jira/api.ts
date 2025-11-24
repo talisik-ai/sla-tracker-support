@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { JiraIssue, JiraSearchResponse } from './types';
+import { retryWithBackoff } from '../utils/retry';
 
 // Default project key from environment (used as fallback only)
 const DEFAULT_PROJECT_KEY = import.meta.env.VITE_JIRA_PROJECT_KEY || 'SAL';
@@ -34,22 +35,30 @@ export async function searchIssues(
         'comment',
     ];
 
-    // Call the local server proxy endpoint instead of Jira directly
+    // Call the local server proxy endpoint with retry logic
     console.log('[Client API] searchIssues called with JQL:', jql)
-    const response = await axios.get<JiraSearchResponse>(
-        '/api/jira/search',
+    
+    return await retryWithBackoff(
+        async () => {
+            const response = await axios.get<JiraSearchResponse>(
+                '/api/jira/search',
+                {
+                    params: {
+                        jql,
+                        fields: fields.join(','),
+                        maxResults: options?.maxResults || 100,
+                        startAt: options?.startAt || 0,
+                    },
+                    timeout: 30000,
+                }
+            );
+            return response.data;
+        },
         {
-            params: {
-                jql,
-                fields: fields.join(','),
-                maxResults: options?.maxResults || 100,
-                startAt: options?.startAt || 0,
-            },
-            timeout: 30000,
+            maxRetries: 2,
+            initialDelay: 1000,
         }
     );
-
-    return response.data;
 }
 
 /**
