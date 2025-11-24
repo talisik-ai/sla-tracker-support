@@ -99,7 +99,7 @@ function generateEmailHTML(data: SLAEmailData): string {
                 </div>
                 
                 <p style="color: #666; font-size: 14px; margin: 20px 0 0 0; padding-top: 20px; border-top: 1px solid #e5e5e5;">
-                    This is an automated alert from the Salina SLA Tracker. Please take action to resolve this issue promptly.
+                    This is an automated alert from the Jira SLA Tracker. Please take action to resolve this issue promptly.
                 </p>
             </td>
         </tr>

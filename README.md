@@ -1,4 +1,4 @@
-# Salina Jira SLA Tracker - Setup Instructions
+# Jira SLA Tracker - Setup Instructions
 
 ## Quick Start
 
@@ -7,31 +7,67 @@
    npm install
    ```
 
-2. **Set Up Environment Variables** (Optional for mock data)
+2. **Set Up Environment Variables** (Optional - app works with mock data)
    ```bash
    cp .env.example .env.local
-   # Edit .env.local with your Jira credentials if you want live data
+   # Edit .env.local with your Jira credentials
    ```
 
-3. **Run Development Server**
+3. **Configure Your Project** (Optional)
+   - The app defaults to mock data
+   - To connect to Jira: Add credentials to `.env.local`
+   - See "Environment Configuration" section below
+
+4. **Run Development Server**
    ```bash
    npm run dev
    ```
 
-4. **Open Browser**
+5. **Open Browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+6. **Run Tests**
+   ```bash
+   npm test
+   ```
 
 ## Environment Configuration
 
-The application works with mock data out-of-the-box. To connect to a real Jira instance:
+### Working with Mock Data (Default)
+The application works perfectly out-of-the-box with mock data - **no configuration needed**!
 
-1. Get a Jira API token from: https://id.atlassian.com/manage-profile/security/api-tokens
-2. Copy `.env.example` to `.env.local`
-3. Fill in the following variables:
-   - `VITE_JIRA_INSTANCE_URL`: Your Jira URL (e.g., https://yourcompany.atlassian.net)
-   - `VITE_JIRA_EMAIL`: Your Jira email
-   - `VITE_JIRA_API_TOKEN`: Your API token
-   - `VITE_JIRA_PROJECT_KEY`: Your project key (default: SAL)
+### Connecting to Real Jira (Optional)
+
+1. **Get a Jira API token**
+   - Visit: https://id.atlassian.com/manage-profile/security/api-tokens
+   - Click "Create API token"
+   - Copy the generated token
+
+2. **Copy environment template**
+   ```bash
+   cp .env.example .env.local
+   ```
+
+3. **Fill in your Jira credentials in `.env.local`**
+   ```bash
+   VITE_JIRA_INSTANCE_URL=https://yourcompany.atlassian.net
+   VITE_JIRA_EMAIL=your-email@example.com
+   VITE_JIRA_API_TOKEN=your-api-token-here
+   VITE_JIRA_PROJECT_KEY=YOUR-PROJECT-KEY
+   ```
+
+4. **Restart the dev server**
+   ```bash
+   npm run dev
+   ```
+
+### Switching Projects
+You can change the project key anytime in **Settings** → **Jira Project** section.
+
+### Security Notes
+- ⚠️ **Never commit `.env.local` to git** (it's already in `.gitignore`)
+- 🔒 Keep your API tokens secure
+- 🔄 Rotate tokens regularly for security
 
 ## Features
 
@@ -74,10 +110,32 @@ src/
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
+- `npm run dev` - Start development server (port 3000)
 - `npm run build` - Build for production
 - `npm run serve` - Preview production build
-- `npm test` - Run tests
+- `npm test` - Run test suite (Vitest)
+
+## Testing
+
+The project includes comprehensive test coverage for critical business logic:
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Test Coverage
+- ✅ SLA calculation logic (12+ tests)
+- ✅ Critical priority handling
+- ✅ Resolution tracking
+- ✅ First response detection
+- ✅ Edge cases and fallbacks
 
 ## Troubleshooting
 
