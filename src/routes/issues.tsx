@@ -11,10 +11,6 @@ import { getAllProjectIssues } from '@/lib/jira/api'
 import { useSLAStore } from '@/lib/sla/store'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { DatePickerWithRange } from '@/components/ui/date-range-picker'
-import { MultiSelect } from '@/components/ui/multi-select'
-import { DateRange } from 'react-day-picker'
-import { isWithinInterval, startOfDay, endOfDay } from 'date-fns'
 
 
 export const Route = createFileRoute('/issues')({
@@ -23,19 +19,13 @@ export const Route = createFileRoute('/issues')({
         assignee?: string,
         name?: string,
         activeTab?: TabType,
-        page?: number,
-        priorities?: string[],
-        from?: string,
-        to?: string
+        page?: number
     } => {
         return {
             assignee: search.assignee as string | undefined,
             name: search.name as string | undefined,
             activeTab: search.activeTab as TabType | undefined,
             page: Number(search.page) || 1,
-            priorities: Array.isArray(search.priorities) ? search.priorities as string[] : search.priorities ? [search.priorities as string] : undefined,
-            from: search.from as string | undefined,
-            to: search.to as string | undefined,
         }
     },
 })
@@ -45,7 +35,7 @@ type TabType = 'all' | 'highest' | 'high' | 'medium' | 'low' | 'lowest' | 'at-ri
 const ITEMS_PER_PAGE = 50 // Production-ready pagination
 
 function IssuesPage() {
-    const { assignee, name, activeTab: searchTab, page: searchPage, priorities: searchPriorities, from: searchFrom, to: searchTo } = Route.useSearch()
+    const { assignee, name, activeTab: searchTab, page: searchPage } = Route.useSearch()
     const navigate = Route.useNavigate()
     const [issues, setIssues] = React.useState<Array<{ issue: JiraIssue, sla: SLAData }>>([])
     const [loading, setLoading] = React.useState(true)
@@ -53,12 +43,6 @@ function IssuesPage() {
     const [currentPage, setCurrentPage] = React.useState(searchPage || 1)
     const [sortBy, setSortBy] = React.useState<'key' | 'summary' | 'priority' | 'status' | 'assignee' | 'created' | 'sla'>('sla')
     const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc'>('desc')
-
-    // Enhanced Filters State
-    const [selectedPriorities, setSelectedPriorities] = React.useState<string[]>(searchPriorities || [])
-    const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
-        searchFrom && searchTo ? { from: new Date(searchFrom), to: new Date(searchTo) } : undefined
-    )
 
     // Get settings from store
     const settings = useSLAStore((state) => state)
@@ -74,23 +58,6 @@ function IssuesPage() {
     React.useEffect(() => {
         if (searchPage) setCurrentPage(searchPage)
     }, [searchPage])
-
-    // Update URL when filters change
-    const updateFilters = (newPriorities: string[], newDateRange: DateRange | undefined) => {
-        setSelectedPriorities(newPriorities)
-        setDateRange(newDateRange)
-        setCurrentPage(1)
-
-        navigate({
-            search: (prev) => ({
-                ...prev,
-                page: 1,
-                priorities: newPriorities.length > 0 ? newPriorities : undefined,
-                from: newDateRange?.from?.toISOString(),
-                to: newDateRange?.to?.toISOString()
-            })
-        })
-    }
 
     const [searchQuery, setSearchQuery] = React.useState('')
     const [selectedIssue, setSelectedIssue] = React.useState<{ issue: JiraIssue, sla: SLAData } | null>(null)
@@ -173,24 +140,8 @@ function IssuesPage() {
             )
         }
 
-        // Filter by Priorities
-        if (selectedPriorities.length > 0) {
-            filtered = filtered.filter(i => selectedPriorities.includes(i.issue.fields.priority.name))
-        }
-
-        // Filter by Date Range (Created Date)
-        if (dateRange?.from && dateRange?.to) {
-            filtered = filtered.filter(i => {
-                const created = new Date(i.issue.fields.created)
-                return isWithinInterval(created, {
-                    start: startOfDay(dateRange.from!),
-                    end: endOfDay(dateRange.to!)
-                })
-            })
-        }
-
         return filtered
-    }, [issues, activeTab, searchQuery, assignee, selectedPriorities, dateRange])
+    }, [issues, activeTab, searchQuery, assignee])
 
     // Sort issues
     const sortedIssues = React.useMemo(() => {
@@ -289,56 +240,22 @@ function IssuesPage() {
                     </div>
                     <button
                         onClick={() => navigate({ to: '/issues', search: {} })}
-                        className="text-sm hover:underline font-medium"
+                        className="text-sm hover:underline font-medium cursor-pointer"
                     >
                         Clear Filter
                     </button>
                 </div>
             )}
 
-            {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                <div className="flex items-center gap-4 flex-1 w-full">
-                    <input
-                        type="text"
-                        placeholder="Search by issue key or summary..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="flex h-10 w-full max-w-sm rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-
-                    <div className="hidden md:flex items-center gap-2">
-                        <DatePickerWithRange
-                            date={dateRange}
-                            onDateChange={(range) => updateFilters(selectedPriorities, range)}
-                        />
-
-                        <div className="w-[200px]">
-                            <MultiSelect
-                                options={[
-                                    { value: 'Critical', label: 'Critical' },
-                                    { value: 'High', label: 'High' },
-                                    { value: 'Medium', label: 'Medium' },
-                                    { value: 'Low', label: 'Low' },
-                                ]}
-                                selected={selectedPriorities}
-                                onChange={(values) => updateFilters(values, dateRange)}
-                                placeholder="Filter Priority"
-                            />
-                        </div>
-
-                        {(selectedPriorities.length > 0 || dateRange) && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => updateFilters([], undefined)}
-                                className="text-muted-foreground hover:text-foreground"
-                            >
-                                Reset
-                            </Button>
-                        )}
-                    </div>
-                </div>
+            {/* Search */}
+            <div className="flex gap-4">
+                <input
+                    type="text"
+                    placeholder="Search by issue key or summary..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex h-10 w-full max-w-md rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
             </div>
 
             {/* Tabs */}
@@ -351,7 +268,7 @@ function IssuesPage() {
                             navigate({ search: (prev) => ({ ...prev, activeTab: tab.id }) })
                         }}
                         className={`
-                            flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap
+                            flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap cursor-pointer
                             ${activeTab === tab.id
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-muted hover:bg-muted/80 text-muted-foreground'}
@@ -373,42 +290,42 @@ function IssuesPage() {
                 <span className="text-sm text-muted-foreground">Sort by:</span>
                 <button
                     onClick={() => handleSort('sla')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors ${sortBy === 'sla' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'sla' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
                         }`}
                 >
                     SLA Status {sortBy === 'sla' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </button>
                 <button
                     onClick={() => handleSort('key')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors ${sortBy === 'key' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'key' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
                         }`}
                 >
                     Key {sortBy === 'key' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </button>
                 <button
                     onClick={() => handleSort('priority')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors ${sortBy === 'priority' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'priority' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
                         }`}
                 >
                     Priority {sortBy === 'priority' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </button>
                 <button
                     onClick={() => handleSort('status')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors ${sortBy === 'status' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'status' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
                         }`}
                 >
                     Status {sortBy === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </button>
                 <button
                     onClick={() => handleSort('assignee')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors ${sortBy === 'assignee' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'assignee' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
                         }`}
                 >
                     Assignee {sortBy === 'assignee' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </button>
                 <button
                     onClick={() => handleSort('created')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors ${sortBy === 'created' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'created' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
                         }`}
                 >
                     Created {sortBy === 'created' && (sortDirection === 'asc' ? '↑' : '↓')}
