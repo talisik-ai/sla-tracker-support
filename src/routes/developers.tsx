@@ -91,7 +91,8 @@ function DevelopersPage() {
 
   return (
     <div className="p-4 md:p-8 space-y-4 md:space-y-6">
-      <div>
+      {/* Sticky Header */}
+      <div className="sticky top-14 z-40 bg-background pb-4 border-b mb-4">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Developer Performance</h1>
         <p className="text-sm text-muted-foreground">Monitor team workload and SLA compliance metrics</p>
       </div>

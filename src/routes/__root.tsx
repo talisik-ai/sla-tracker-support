@@ -6,6 +6,7 @@ import Header from '../components/Header'
 import { ErrorBoundary } from '../components/ErrorBoundary'
 
 import appCss from '../styles.css?url'
+import scrollbarCss from '../styles/scrollbar.css?url'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -25,6 +26,10 @@ export const Route = createRootRoute({
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+      {
+        rel: 'stylesheet',
+        href: scrollbarCss,
       },
     ],
   }),

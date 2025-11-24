@@ -247,34 +247,37 @@ function DashboardPage() {
 
     return (
         <div className="p-4 md:p-8 space-y-4 md:space-y-8">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <div>
-                    <div className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 flex items-center gap-2 flex-wrap">
-                        <span className="truncate">{projectInfo ? `${projectInfo.name} (${projectInfo.id})` : 'Loading project info...'}</span>
-                        {/* Real-time connection indicator */}
-                        {isConnected && (
-                            <span className="flex items-center gap-1 text-green-600 text-xs">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            {/* Sticky Header */}
+            <div className="sticky top-14 z-40 bg-background pb-4 border-b mb-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                    <div>
+                        <div className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 flex items-center gap-2 flex-wrap">
+                            <span className="truncate">{projectInfo ? `${projectInfo.name} (${projectInfo.id})` : 'Loading project info...'}</span>
+                            {/* Real-time connection indicator */}
+                            {isConnected && (
+                                <span className="flex items-center gap-1 text-green-600 text-xs">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    </span>
+                                    Live
                                 </span>
-                                Live
-                            </span>
-                        )}
+                            )}
+                        </div>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => loadData()}
+                        disabled={isRefreshing}
+                        className="w-full sm:w-auto"
+                    >
+                        <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        <span className="hidden sm:inline">{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
+                        <span className="sm:hidden">Refresh</span>
+                    </Button>
                 </div>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => loadData()}
-                    disabled={isRefreshing}
-                    className="w-full sm:w-auto"
-                >
-                    <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                    <span className="hidden sm:inline">{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
-                    <span className="sm:hidden">Refresh</span>
-                </Button>
             </div>
 
             {error && (

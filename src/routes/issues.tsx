@@ -247,19 +247,21 @@ function IssuesPage() {
                 </div>
             )}
 
-            {/* Search */}
-            <div className="flex gap-4">
-                <input
-                    type="text"
-                    placeholder="Search by issue key or summary..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                />
-            </div>
+            {/* Sticky Filter Bar */}
+            <div className="sticky top-14 z-40 bg-background pb-4 space-y-4 border-b mb-4">
+                {/* Search */}
+                <div className="flex gap-4">
+                    <input
+                        type="text"
+                        placeholder="Search by issue key or summary..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                </div>
 
-            {/* Tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-2">
+                {/* Tabs */}
+                <div className="flex gap-2 overflow-x-auto pb-2 -mb-2 hide-scrollbar">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -285,8 +287,8 @@ function IssuesPage() {
                 ))}
             </div>
 
-            {/* Sort Controls */}
-            <div className="flex gap-2 flex-wrap items-center">
+                {/* Sort Controls */}
+                <div className="flex gap-2 flex-wrap items-center">
                 <span className="text-sm text-muted-foreground">Sort by:</span>
                 <button
                     onClick={() => handleSort('sla')}
@@ -330,6 +332,7 @@ function IssuesPage() {
                 >
                     Created {sortBy === 'created' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </button>
+                </div>
             </div>
 
             {/* Issues List */}
@@ -354,7 +357,7 @@ function IssuesPage() {
                                         </Badge>
                                         <Badge variant="outline">{issue.fields.status.name}</Badge>
                                     </div>
-                                    <h3 className="font-medium leading-none">{issue.fields.summary}</h3>
+                                    <h3 className="font-medium leading-tight break-words overflow-wrap-anywhere">{issue.fields.summary}</h3>
                                     <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2">
                                         <div className="flex items-center gap-2">
                                             <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-[10px] text-white font-bold">
@@ -365,7 +368,7 @@ function IssuesPage() {
                                         <span>Created {new Date(issue.fields.created).toLocaleDateString()}</span>
                                     </div>
                                 </div>
-                                <div className="w-48 shrink-0">
+                                <div className="w-full sm:w-48 shrink-0">
                                     <SLATimer
                                         deadlineHours={sla.resolutionDeadline}
                                         createdDate={sla.createdDate}
