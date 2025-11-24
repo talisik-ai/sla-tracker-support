@@ -17,11 +17,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as ApiWebhooksJiraRouteImport } from './routes/api.webhooks.jira'
+import { Route as ApiNotificationsSendRouteImport } from './routes/api.notifications.send'
+import { Route as ApiJiraUpdateSlaRouteImport } from './routes/api.jira.update-sla'
 import { Route as ApiJiraSearchRouteImport } from './routes/api.jira.search'
+import { Route as ApiEventsStreamRouteImport } from './routes/api.events.stream'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as ApiJiraIssueIssueKeyChangelogRouteImport } from './routes/api.jira.issue.$issueKey.changelog'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -63,9 +68,29 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWebhooksJiraRoute = ApiWebhooksJiraRouteImport.update({
+  id: '/api/webhooks/jira',
+  path: '/api/webhooks/jira',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNotificationsSendRoute = ApiNotificationsSendRouteImport.update({
+  id: '/api/notifications/send',
+  path: '/api/notifications/send',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiJiraUpdateSlaRoute = ApiJiraUpdateSlaRouteImport.update({
+  id: '/api/jira/update-sla',
+  path: '/api/jira/update-sla',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiJiraSearchRoute = ApiJiraSearchRouteImport.update({
   id: '/api/jira/search',
   path: '/api/jira/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiEventsStreamRoute = ApiEventsStreamRouteImport.update({
+  id: '/api/events/stream',
+  path: '/api/events/stream',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
@@ -88,6 +113,12 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
   path: '/demo/start/ssr/data-only',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiJiraIssueIssueKeyChangelogRoute =
+  ApiJiraIssueIssueKeyChangelogRouteImport.update({
+    id: '/api/jira/issue/$issueKey/changelog',
+    path: '/api/jira/issue/$issueKey/changelog',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -95,7 +126,11 @@ export interface FileRoutesByFullPath {
   '/developers': typeof DevelopersRoute
   '/issues': typeof IssuesRoute
   '/settings': typeof SettingsRoute
+  '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
+  '/api/jira/update-sla': typeof ApiJiraUpdateSlaRoute
+  '/api/notifications/send': typeof ApiNotificationsSendRoute
+  '/api/webhooks/jira': typeof ApiWebhooksJiraRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -103,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/api/jira/issue/$issueKey/changelog': typeof ApiJiraIssueIssueKeyChangelogRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,7 +146,11 @@ export interface FileRoutesByTo {
   '/developers': typeof DevelopersRoute
   '/issues': typeof IssuesRoute
   '/settings': typeof SettingsRoute
+  '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
+  '/api/jira/update-sla': typeof ApiJiraUpdateSlaRoute
+  '/api/notifications/send': typeof ApiNotificationsSendRoute
+  '/api/webhooks/jira': typeof ApiWebhooksJiraRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -118,6 +158,7 @@ export interface FileRoutesByTo {
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/api/jira/issue/$issueKey/changelog': typeof ApiJiraIssueIssueKeyChangelogRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -126,7 +167,11 @@ export interface FileRoutesById {
   '/developers': typeof DevelopersRoute
   '/issues': typeof IssuesRoute
   '/settings': typeof SettingsRoute
+  '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
+  '/api/jira/update-sla': typeof ApiJiraUpdateSlaRoute
+  '/api/notifications/send': typeof ApiNotificationsSendRoute
+  '/api/webhooks/jira': typeof ApiWebhooksJiraRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -134,6 +179,7 @@ export interface FileRoutesById {
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/api/jira/issue/$issueKey/changelog': typeof ApiJiraIssueIssueKeyChangelogRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -143,7 +189,11 @@ export interface FileRouteTypes {
     | '/developers'
     | '/issues'
     | '/settings'
+    | '/api/events/stream'
     | '/api/jira/search'
+    | '/api/jira/update-sla'
+    | '/api/notifications/send'
+    | '/api/webhooks/jira'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -151,6 +201,7 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr'
+    | '/api/jira/issue/$issueKey/changelog'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -158,7 +209,11 @@ export interface FileRouteTypes {
     | '/developers'
     | '/issues'
     | '/settings'
+    | '/api/events/stream'
     | '/api/jira/search'
+    | '/api/jira/update-sla'
+    | '/api/notifications/send'
+    | '/api/webhooks/jira'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -166,6 +221,7 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr'
+    | '/api/jira/issue/$issueKey/changelog'
   id:
     | '__root__'
     | '/'
@@ -173,7 +229,11 @@ export interface FileRouteTypes {
     | '/developers'
     | '/issues'
     | '/settings'
+    | '/api/events/stream'
     | '/api/jira/search'
+    | '/api/jira/update-sla'
+    | '/api/notifications/send'
+    | '/api/webhooks/jira'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -181,6 +241,7 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr/'
+    | '/api/jira/issue/$issueKey/changelog'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -189,7 +250,11 @@ export interface RootRouteChildren {
   DevelopersRoute: typeof DevelopersRoute
   IssuesRoute: typeof IssuesRoute
   SettingsRoute: typeof SettingsRoute
+  ApiEventsStreamRoute: typeof ApiEventsStreamRoute
   ApiJiraSearchRoute: typeof ApiJiraSearchRoute
+  ApiJiraUpdateSlaRoute: typeof ApiJiraUpdateSlaRoute
+  ApiNotificationsSendRoute: typeof ApiNotificationsSendRoute
+  ApiWebhooksJiraRoute: typeof ApiWebhooksJiraRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
@@ -197,6 +262,7 @@ export interface RootRouteChildren {
   DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
   DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
   DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute
+  ApiJiraIssueIssueKeyChangelogRoute: typeof ApiJiraIssueIssueKeyChangelogRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -257,11 +323,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhooks/jira': {
+      id: '/api/webhooks/jira'
+      path: '/api/webhooks/jira'
+      fullPath: '/api/webhooks/jira'
+      preLoaderRoute: typeof ApiWebhooksJiraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/notifications/send': {
+      id: '/api/notifications/send'
+      path: '/api/notifications/send'
+      fullPath: '/api/notifications/send'
+      preLoaderRoute: typeof ApiNotificationsSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/jira/update-sla': {
+      id: '/api/jira/update-sla'
+      path: '/api/jira/update-sla'
+      fullPath: '/api/jira/update-sla'
+      preLoaderRoute: typeof ApiJiraUpdateSlaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/jira/search': {
       id: '/api/jira/search'
       path: '/api/jira/search'
       fullPath: '/api/jira/search'
       preLoaderRoute: typeof ApiJiraSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/events/stream': {
+      id: '/api/events/stream'
+      path: '/api/events/stream'
+      fullPath: '/api/events/stream'
+      preLoaderRoute: typeof ApiEventsStreamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/start/ssr/': {
@@ -292,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/jira/issue/$issueKey/changelog': {
+      id: '/api/jira/issue/$issueKey/changelog'
+      path: '/api/jira/issue/$issueKey/changelog'
+      fullPath: '/api/jira/issue/$issueKey/changelog'
+      preLoaderRoute: typeof ApiJiraIssueIssueKeyChangelogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -301,7 +402,11 @@ const rootRouteChildren: RootRouteChildren = {
   DevelopersRoute: DevelopersRoute,
   IssuesRoute: IssuesRoute,
   SettingsRoute: SettingsRoute,
+  ApiEventsStreamRoute: ApiEventsStreamRoute,
   ApiJiraSearchRoute: ApiJiraSearchRoute,
+  ApiJiraUpdateSlaRoute: ApiJiraUpdateSlaRoute,
+  ApiNotificationsSendRoute: ApiNotificationsSendRoute,
+  ApiWebhooksJiraRoute: ApiWebhooksJiraRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
@@ -309,6 +414,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
   DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
   DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,
+  ApiJiraIssueIssueKeyChangelogRoute: ApiJiraIssueIssueKeyChangelogRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

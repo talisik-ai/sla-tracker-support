@@ -66,6 +66,10 @@ export const Route = createFileRoute('/api/jira/search')({
                     )
 
                     console.log(`[Server Proxy] Success! Received ${response.data.issues?.length || 0} issues from Jira`)
+                    if (response.data.issues?.length > 0) {
+                        console.log('[Server Proxy] First Issue Status:', JSON.stringify(response.data.issues[0].fields.status, null, 2))
+                        console.log('[Server Proxy] First Issue Resolution Date:', response.data.issues[0].fields.resolutiondate)
+                    }
 
                     // Return the Jira API response to the client
                     return json(response.data)

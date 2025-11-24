@@ -17,7 +17,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'SLA Tracker',
       },
     ],
     links: [
@@ -29,6 +29,15 @@ export const Route = createRootRoute({
   }),
 
   shellComponent: RootDocument,
+  notFoundComponent: () => (
+    <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+      <h1 className="text-4xl font-bold">404</h1>
+      <p className="text-xl text-muted-foreground">Page Not Found</p>
+      <a href="/" className="text-primary hover:underline">
+        Go back home
+      </a>
+    </div>
+  ),
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {

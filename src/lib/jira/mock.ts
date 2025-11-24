@@ -8,7 +8,7 @@ export const MOCK_ISSUES: JiraIssue[] = [
         id: '10001',
         key: 'SAL-101',
         fields: {
-            project: { id: '10000', key: 'SWA2', name: 'Salina Web Application' },
+            project: { id: '10000', key: 'SWA2', name: 'Demo Web Application' },
             summary: 'Critical production bug in login flow',
             description: 'Users cannot login...',
             status: { name: 'Open', statusCategory: { key: 'new', name: 'To Do' } },
@@ -28,7 +28,7 @@ export const MOCK_ISSUES: JiraIssue[] = [
         id: '10002',
         key: 'SAL-102',
         fields: {
-            project: { id: '10000', key: 'SWA2', name: 'Salina Web Application' },
+            project: { id: '10000', key: 'SWA2', name: 'Demo Web Application' },
             summary: 'High priority feature request',
             description: 'Need this feature...',
             status: { name: 'In Progress', statusCategory: { key: 'indeterminate', name: 'In Progress' } },
@@ -48,7 +48,7 @@ export const MOCK_ISSUES: JiraIssue[] = [
         id: '10003',
         key: 'SAL-103',
         fields: {
-            project: { id: '10000', key: 'SWA2', name: 'Salina Web Application' },
+            project: { id: '10000', key: 'SWA2', name: 'Demo Web Application' },
             summary: 'Medium priority task',
             description: 'Do this task...',
             status: { name: 'Open', statusCategory: { key: 'new', name: 'To Do' } },
@@ -68,7 +68,7 @@ export const MOCK_ISSUES: JiraIssue[] = [
         id: '10004',
         key: 'SAL-104',
         fields: {
-            project: { id: '10000', key: 'SWA2', name: 'Salina Web Application' },
+            project: { id: '10000', key: 'SWA2', name: 'Demo Web Application' },
             summary: 'Low priority maintenance',
             description: 'Cleanup...',
             status: { name: 'Done', statusCategory: { key: 'done', name: 'Done' } },
@@ -88,7 +88,7 @@ export const MOCK_ISSUES: JiraIssue[] = [
         id: '10005',
         key: 'SAL-105',
         fields: {
-            project: { id: '10000', key: 'SWA2', name: 'Salina Web Application' },
+            project: { id: '10000', key: 'SWA2', name: 'Demo Web Application' },
             summary: 'Critical issue about to breach',
             description: 'Urgent...',
             status: { name: 'Open', statusCategory: { key: 'new', name: 'To Do' } },

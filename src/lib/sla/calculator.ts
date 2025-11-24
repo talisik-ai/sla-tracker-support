@@ -1,20 +1,21 @@
 import { differenceInMinutes } from 'date-fns';
-import { SLA_RULES } from './rules';
+import { SLA_RULES, PRIORITY_MAPPING } from './rules';
 import type { JiraIssue, SLAData } from '../jira/types';
 import type { SLASettings } from './store';
 
 export function calculateSLA(issue: JiraIssue, settings?: SLASettings): SLAData {
-    const priority = issue.fields.priority.name;
+    const jiraPriority = issue.fields.priority.name;
+    // Map Jira priority to our SLA priority level
+    const mappedPriority = PRIORITY_MAPPING[jiraPriority] || 'Medium';
+
     // Use provided settings or fallback to default rules
     const rules = settings ? settings.rules : SLA_RULES;
-    const slaConfig = rules[priority];
+    let slaConfig = rules[mappedPriority];
 
     if (!slaConfig) {
-        // Fallback or throw? Let's throw for now to catch issues early, or fallback to Low?
-        // For safety, let's log and fallback to Low if possible, but throwing is better for dev.
-        // But in prod, we might want to be safe.
-        // Let's assume priority matches our config.
-        throw new Error(`No SLA configuration for priority: ${priority}`);
+        // Fallback to Medium priority for unknown priorities
+        console.warn(`No SLA configuration for priority: ${mappedPriority}, falling back to Medium`);
+        slaConfig = rules['Medium'] || SLA_RULES['Medium'];
     }
 
     const createdDate = new Date(issue.fields.created);
@@ -43,7 +44,14 @@ export function calculateSLA(issue: JiraIssue, settings?: SLASettings): SLAData 
                 : 'on-track';
 
     // Calculate resolution SLA
-    const isResolved = ['Done', 'Resolved', 'Closed'].includes(issue.fields.status.name);
+    // DEBUG: Inspect status structure
+    if (issue.key === 'SST-1') {
+        console.log(`[SLA Debug] Issue ${issue.key} Status:`, JSON.stringify(issue.fields.status, null, 2));
+    }
+
+    const isResolved =
+        ['Done', 'Resolved', 'Closed'].includes(issue.fields.status.name) ||
+        issue.fields.status.statusCategory?.key === 'done';
     const resolutionDate = issue.fields.resolutiondate
         ? new Date(issue.fields.resolutiondate)
         : null;
@@ -72,7 +80,7 @@ export function calculateSLA(issue: JiraIssue, settings?: SLASettings): SLAData 
 
     return {
         issueKey: issue.key,
-        priority: priority as 'Critical' | 'High' | 'Medium' | 'Low',
+        priority: jiraPriority,
         createdDate,
 
         // First Response

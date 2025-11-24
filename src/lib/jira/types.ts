@@ -14,7 +14,7 @@ export interface JiraIssue {
       statusCategory: { key: string; name: string; }
     };
     priority: {
-      name: 'Critical' | 'High' | 'Medium' | 'Low';
+      name: 'Highest' | 'Critical' | 'High' | 'Medium' | 'Low' | 'Lowest';
       iconUrl: string;
     };
     issuetype: {
@@ -48,7 +48,7 @@ export interface JiraIssue {
 
 export interface SLAData {
   issueKey: string;
-  priority: 'Critical' | 'High' | 'Medium' | 'Low';
+  priority: string;  // Jira priority name (can be Highest, Critical, High, Medium, Low, Lowest, etc.);
   createdDate: Date;
 
   // First Response SLA
@@ -92,6 +92,7 @@ export interface DeveloperPerformance {
   // Historical performance
   totalResolvedIssues: number;
   slaComplianceRate: number; // percentage
+  firstResponseCompliance: number; // percentage
   averageFirstResponseTime: number; // minutes
   averageResolutionTime: number; // hours
 

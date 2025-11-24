@@ -64,11 +64,14 @@ export function buildProjectJQL(projectKey?: string): string {
 }
 
 /**
- * Get all issues for the Salina project
+ * Get all issues for the project
  */
-export async function getAllProjectIssues(): Promise<JiraIssue[]> {
-    const jql = `project = "${PROJECT_KEY}" ORDER BY created DESC`;
-    const response = await searchIssues(jql, { maxResults: 1000 });
+export async function getAllProjectIssues(projectKey?: string): Promise<JiraIssue[]> {
+    const key = projectKey || PROJECT_KEY;
+    console.log(`[API] getAllProjectIssues called with key: "${key}" (arg: "${projectKey}", default: "${PROJECT_KEY}")`);
+    const jql = `project = "${key}" ORDER BY created DESC`;
+    // Reduced maxResults to 100 to prevent timeouts/errors on developers page
+    const response = await searchIssues(jql, { maxResults: 100 });
     return response.issues;
 }
 
@@ -108,4 +111,14 @@ export async function getIssuesByAssignee(accountId: string): Promise<JiraIssue[
     const jql = `project = "${PROJECT_KEY}" AND assignee = "${accountId}" ORDER BY priority DESC, created ASC`;
     const response = await searchIssues(jql);
     return response.issues;
+}
+
+/**
+ * Get issue changelog/history
+ */
+export async function getIssueChangelog(issueKey: string) {
+    const response = await axios.get(`/api/jira/issue/${issueKey}/changelog`, {
+        timeout: 10000,
+    });
+    return response.data;
 }

@@ -6,6 +6,8 @@ import { ExternalLink, Upload, Check, AlertCircle } from 'lucide-react'
 import { useState } from 'react'
 import { validateCustomFieldsConfigured } from '@/lib/jira/custom-fields'
 import { syncSLAToJira as performSync } from '@/lib/jira/sla-sync'
+import { formatElapsedTime, formatRemainingTime } from '@/lib/utils/time'
+import { IssueChangelog } from './IssueChangelog'
 
 interface IssueDetailModalProps {
     issue: JiraIssue | null
@@ -137,13 +139,13 @@ export function IssueDetailModal({ issue, sla, isOpen, onClose }: IssueDetailMod
                             <div className="flex justify-between text-sm mb-2">
                                 <span className="text-muted-foreground">First Response SLA:</span>
                                 <span className={`font-medium ${sla.hasFirstResponse
-                                        ? sla.firstResponseStatus === 'met' ? 'text-green-600' : 'text-red-600'
-                                        : sla.firstResponseStatus === 'breached' ? 'text-red-600'
-                                            : sla.firstResponseStatus === 'at-risk' ? 'text-yellow-600'
-                                                : 'text-green-600'
+                                    ? sla.firstResponseStatus === 'met' ? 'text-green-600' : 'text-red-600'
+                                    : sla.firstResponseStatus === 'breached' ? 'text-red-600'
+                                        : sla.firstResponseStatus === 'at-risk' ? 'text-yellow-600'
+                                            : 'text-green-600'
                                     }`}>
                                     {sla.hasFirstResponse
-                                        ? `Responded in ${Math.round(sla.firstResponseTimeElapsed / 60)}h`
+                                        ? `Responded in ${formatElapsedTime(sla.firstResponseTimeElapsed)}`
                                         : sla.firstResponseStatus === 'breached' ? 'Breached'
                                             : sla.firstResponseStatus === 'at-risk' ? 'At Risk'
                                                 : 'On Track'
@@ -153,19 +155,19 @@ export function IssueDetailModal({ issue, sla, isOpen, onClose }: IssueDetailMod
                             <div className="w-full bg-gray-200 rounded-full h-2.5">
                                 <div
                                     className={`h-2.5 rounded-full transition-all ${sla.firstResponsePercentageUsed > 100 ? 'bg-red-600' :
-                                            sla.firstResponsePercentageUsed > 75 ? 'bg-yellow-500' :
-                                                'bg-green-600'
+                                        sla.firstResponsePercentageUsed > 75 ? 'bg-yellow-500' :
+                                            'bg-green-600'
                                         }`}
                                     style={{ width: `${Math.min(sla.firstResponsePercentageUsed, 100)}%` }}
                                 />
                             </div>
                             <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                                <span>{Math.round(sla.firstResponseTimeElapsed / 60)} hours elapsed</span>
+                                <span>{formatElapsedTime(sla.firstResponseTimeElapsed)}</span>
                                 <span>
                                     {sla.hasFirstResponse
                                         ? `Met (${Math.round(sla.firstResponsePercentageUsed)}%)`
                                         : sla.firstResponseTimeRemaining > 0
-                                            ? `${Math.round(sla.firstResponseTimeRemaining / 60)} hours remaining`
+                                            ? formatRemainingTime(sla.firstResponseTimeRemaining)
                                             : 'Overdue'
                                     }
                                 </span>
@@ -196,13 +198,11 @@ export function IssueDetailModal({ issue, sla, isOpen, onClose }: IssueDetailMod
                                 />
                             </div>
                             <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                                <span>{Math.round(sla.resolutionTimeElapsed / 60)} hours elapsed</span>
+                                <span>{formatElapsedTime(sla.resolutionTimeElapsed)}</span>
                                 <span>
                                     {sla.isResolved
                                         ? 'Resolved'
-                                        : sla.resolutionTimeRemaining > 0
-                                            ? `${Math.round(sla.resolutionTimeRemaining / 60)} hours remaining`
-                                            : `${Math.abs(Math.round(sla.resolutionTimeRemaining / 60))} hours overdue`
+                                        : formatRemainingTime(sla.resolutionTimeRemaining)
                                     }
                                 </span>
                             </div>
@@ -232,13 +232,11 @@ export function IssueDetailModal({ issue, sla, isOpen, onClose }: IssueDetailMod
                                 />
                             </div>
                             <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                                <span>{Math.round(sla.firstResponseTimeElapsed / 60)} hours elapsed</span>
+                                <span>{formatElapsedTime(sla.firstResponseTimeElapsed)}</span>
                                 <span>
                                     {sla.hasFirstResponse
                                         ? 'Responded'
-                                        : sla.firstResponseTimeRemaining > 0
-                                            ? `${Math.round(sla.firstResponseTimeRemaining / 60)} hours remaining`
-                                            : `${Math.abs(Math.round(sla.firstResponseTimeRemaining / 60))} hours overdue`
+                                        : formatRemainingTime(sla.firstResponseTimeRemaining)
                                     }
                                 </span>
                             </div>
@@ -294,6 +292,11 @@ export function IssueDetailModal({ issue, sla, isOpen, onClose }: IssueDetailMod
                             </div>
                         </div>
                     )}
+
+                    {/* Change History */}
+                    <div className="border rounded-lg p-4">
+                        <IssueChangelog issueKey={issue.key} />
+                    </div>
 
                     {/* Actions */}
                     <div className="flex flex-col gap-3 pt-4 border-t">

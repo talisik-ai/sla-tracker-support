@@ -11,6 +11,14 @@ import { JiraIssue, SLAData } from '@/lib/jira/types'
 import { RefreshCw, AlertCircle } from 'lucide-react'
 import { useCountUp } from '@/hooks/use-count-up'
 import { useSLAStore } from '@/lib/sla/store'
+import { batchCheckNotifications } from '@/lib/notifications/helpers'
+import { SSEClient } from '@/lib/events/sse-client'
+import { useNotificationStore } from '@/lib/notifications/store'
+import { IssueStatusChart } from '@/components/dashboard/IssueStatusChart'
+import { ResponseTimeChart } from '@/components/dashboard/ResponseTimeChart'
+import { SLAComplianceChart } from '@/components/dashboard/SLAComplianceChart'
+import { IssueDetailModal } from '@/components/issues/IssueDetailModal'
+import '@/lib/notifications/demo' // Make demo function available in console
 
 export const Route = createFileRoute('/dashboard')({
     component: DashboardPage,
@@ -28,6 +36,11 @@ function DashboardPage() {
     const [projectInfo, setProjectInfo] = React.useState<{ id: string; name: string } | null>(null)
     const [isRefreshing, setIsRefreshing] = React.useState(false)
     const [error, setError] = React.useState<string | null>(null)
+    const [isConnected, setIsConnected] = React.useState(false)
+    const [selectedIssue, setSelectedIssue] = React.useState<{ issue: JiraIssue, sla: SLAData } | null>(null)
+    const sseClientRef = React.useRef<SSEClient | null>(null)
+
+    const { addNotification } = useNotificationStore()
 
     // Get settings and projectKey from store
     const store = useSLAStore()
@@ -65,6 +78,10 @@ function DashboardPage() {
                 sla: calculateSLA(issue, store)
             }))
             setIssues(processed)
+
+            // Check for SLA issues and trigger notifications
+            batchCheckNotifications(processed)
+
             // Only clear error if we successfully fetched from API, otherwise keep the mock data warning
             if (!usedMockData) {
                 setError(null)
@@ -90,11 +107,79 @@ function DashboardPage() {
         loadData()
     }, [loadData])
 
+    // Initialize SSE connection for real-time updates
+    React.useEffect(() => {
+        console.log('[Dashboard] Initializing SSE connection...')
+
+        const sseClient = new SSEClient('/api/events/stream')
+        sseClientRef.current = sseClient
+
+        sseClient.connect({
+            connected: (data) => {
+                console.log('[Dashboard] SSE connected:', data)
+                setIsConnected(true)
+            },
+            heartbeat: () => {
+                // Keep-alive heartbeat
+                if (!isConnected) setIsConnected(true)
+            },
+            'issue-created': (data) => {
+                console.log('[Dashboard] New issue created:', data.issueKey)
+                addNotification({
+                    type: 'info',
+                    title: 'New Issue Created',
+                    message: `${data.issueKey} was created in Jira`,
+                    link: `/issues?search=${data.issueKey}`
+                })
+                // Reload data to include new issue
+                loadData()
+            },
+            'issue-updated': (data) => {
+                console.log('[Dashboard] Issue updated:', data.issueKey)
+                // Update the specific issue in state
+                setIssues(prev => {
+                    const index = prev.findIndex(i => i.issue.key === data.issueKey)
+                    if (index !== -1) {
+                        const updated = [...prev]
+                        updated[index] = {
+                            issue: data.issue,
+                            sla: calculateSLA(data.issue, store)
+                        }
+                        return updated
+                    }
+                    return prev
+                })
+                addNotification({
+                    type: 'info',
+                    title: 'Issue Updated',
+                    message: `${data.issueKey} was updated in Jira`,
+                    link: `/issues?search=${data.issueKey}`
+                })
+            },
+            'issue-deleted': (data) => {
+                console.log('[Dashboard] Issue deleted:', data.issueKey)
+                setIssues(prev => prev.filter(i => i.issue.key !== data.issueKey))
+                addNotification({
+                    type: 'warning',
+                    title: 'Issue Deleted',
+                    message: `${data.issueKey} was deleted from Jira`
+                })
+            }
+        })
+
+        return () => {
+            console.log('[Dashboard] Disconnecting SSE...')
+            sseClient.disconnect()
+            setIsConnected(false)
+        }
+    }, [loadData, store, addNotification])
+
     const stats = React.useMemo(() => {
         const total = issues.length
         const met = issues.filter(i => i.sla.overallStatus === 'met').length
         const atRisk = issues.filter(i => i.sla.isAtRisk).length
         const breached = issues.filter(i => i.sla.isBreached).length
+        const pending = issues.filter(i => !i.sla.hasFirstResponse && !i.sla.isResolved).length
         const complianceRate = total > 0 ? Math.round((met / total) * 100) : 100
 
         // First Response metrics
@@ -107,8 +192,50 @@ function DashboardPage() {
             ? 0
             : Math.round(responded.reduce((sum, i) => sum + i.sla.firstResponseTimeElapsed, 0) / responded.length)
 
-        return { total, met, atRisk, breached, complianceRate, pendingResponse, responseBreached, avgFirstResponseTime }
+        return { total, met, atRisk, breached, pending, complianceRate, pendingResponse, responseBreached, avgFirstResponseTime }
     }, [issues])
+
+    // Chart data transformations
+    const issueStatusData = React.useMemo(() => ({
+        met: stats.met,
+        atRisk: stats.atRisk,
+        breached: stats.breached,
+        pending: stats.pending,
+    }), [stats])
+
+    const responseTimeData = React.useMemo(() => {
+        const priorities = ['Critical', 'High', 'Medium', 'Low']
+        return priorities.map(priority => {
+            const priorityIssues = issues.filter(i =>
+                i.issue.fields.priority.name === priority && i.sla.hasFirstResponse
+            )
+            const avgTime = priorityIssues.length === 0
+                ? 0
+                : priorityIssues.reduce((sum, i) => sum + i.sla.firstResponseTimeElapsed, 0) / priorityIssues.length
+
+            // Get target from first issue of this priority or use defaults
+            const target = priorityIssues.length > 0
+                ? priorityIssues[0].sla.firstResponseDeadline
+                : priority === 'Critical' ? 60 : priority === 'High' ? 240 : 480
+
+            return {
+                priority,
+                avgTime: Math.round(avgTime),
+                target,
+                count: priorityIssues.length
+            }
+        }).filter(d => d.count > 0) // Only show priorities with data
+    }, [issues])
+
+    const complianceData = React.useMemo(() => {
+        // For now, show current snapshot as a single data point
+        // In a real app, you'd fetch historical data from backend
+        return [{
+            date: 'Current',
+            compliance: stats.complianceRate,
+            total: stats.total
+        }]
+    }, [stats])
 
     if (loading && !issues.length) {
         return (
@@ -122,8 +249,18 @@ function DashboardPage() {
         <div className="p-8 space-y-8">
             <div className="flex justify-between items-center">
                 <div>
-                    <div className="text-sm font-medium text-muted-foreground mb-1">
-                        {projectInfo ? `${projectInfo.name} (${projectInfo.id})` : 'Loading project info...'}
+                    <div className="text-sm font-medium text-muted-foreground mb-1 flex items-center gap-2">
+                        <span>{projectInfo ? `${projectInfo.name} (${projectInfo.id})` : 'Loading project info...'}</span>
+                        {/* Real-time connection indicator */}
+                        {isConnected && (
+                            <span className="flex items-center gap-1 text-green-600 text-xs">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                                Live
+                            </span>
+                        )}
                     </div>
                     <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
                 </div>
@@ -183,6 +320,18 @@ function DashboardPage() {
                 />
             </div>
 
+            {/* Analytics Charts */}
+            <div className="space-y-4">
+                <h2 className="text-2xl font-bold tracking-tight">Analytics</h2>
+                <div className="grid gap-4 md:grid-cols-2">
+                    <IssueStatusChart data={issueStatusData} />
+                    <ResponseTimeChart data={responseTimeData} />
+                </div>
+                <div className="grid gap-4">
+                    <SLAComplianceChart data={complianceData} />
+                </div>
+            </div>
+
             {/* Critical Issues */}
             <div className="grid gap-4 md:grid-cols-2">
                 <Card className="col-span-1">
@@ -194,7 +343,11 @@ function DashboardPage() {
                             {issues
                                 .filter(i => i.issue.fields.priority.name === 'Critical' && !i.sla.isResolved)
                                 .map(({ issue, sla }) => (
-                                    <div key={issue.id} className="flex items-center justify-between border-b pb-4 last:border-0">
+                                    <div
+                                        key={issue.id}
+                                        className="flex items-center justify-between border-b pb-4 last:border-0 cursor-pointer hover:bg-muted/50 rounded-md p-2 -m-2 transition-colors"
+                                        onClick={() => setSelectedIssue({ issue, sla })}
+                                    >
                                         <div className="space-y-1">
                                             <div className="font-medium">{issue.key}</div>
                                             <div className="text-sm text-muted-foreground truncate max-w-[200px]">
@@ -226,7 +379,11 @@ function DashboardPage() {
                             {issues
                                 .filter(i => i.sla.isAtRisk && !i.sla.isResolved)
                                 .map(({ issue, sla }) => (
-                                    <div key={issue.id} className="flex items-center justify-between border-b pb-4 last:border-0">
+                                    <div
+                                        key={issue.id}
+                                        className="flex items-center justify-between border-b pb-4 last:border-0 cursor-pointer hover:bg-muted/50 rounded-md p-2 -m-2 transition-colors"
+                                        onClick={() => setSelectedIssue({ issue, sla })}
+                                    >
                                         <div className="space-y-1">
                                             <div className="font-medium">{issue.key}</div>
                                             <div className="text-sm text-muted-foreground truncate max-w-[200px]">
@@ -248,6 +405,14 @@ function DashboardPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Issue Detail Modal */}
+            <IssueDetailModal
+                issue={selectedIssue?.issue || null}
+                sla={selectedIssue?.sla || null}
+                isOpen={selectedIssue !== null}
+                onClose={() => setSelectedIssue(null)}
+            />
         </div>
     )
 }

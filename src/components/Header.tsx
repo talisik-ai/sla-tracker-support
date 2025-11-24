@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { Settings, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { NotificationBell } from '@/components/notifications/NotificationBell'
 import { useState } from 'react'
 
 export default function Header() {
@@ -12,7 +13,7 @@ export default function Header() {
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-2xl">📊</span>
-            <span className="font-bold text-xl">Salina SLA Tracker</span>
+            <span className="font-bold text-xl">SLA Tracker</span>
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
@@ -46,6 +47,7 @@ export default function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-2">
+          <NotificationBell />
           <Link to="/settings">
             <Button variant="ghost" size="icon" title="Settings">
               <Settings className="h-5 w-5" />

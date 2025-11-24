@@ -6,6 +6,16 @@ export interface SLARule {
     businessHoursOnly: boolean;
 }
 
+// Map Jira priority names to our SLA priority levels
+export const PRIORITY_MAPPING: Record<string, string> = {
+    'Highest': 'Critical',
+    'Critical': 'Critical',
+    'High': 'High',
+    'Medium': 'Medium',
+    'Low': 'Low',
+    'Lowest': 'Low',
+};
+
 export const SLA_RULES: Record<string, SLARule> = {
     'Critical': {
         priority: 'Critical',

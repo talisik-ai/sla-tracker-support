@@ -35,14 +35,21 @@ export function SLATimer({
     const timeRemaining = deadlineMinutes - timeElapsed
     const percentageUsed = (timeElapsed / deadlineMinutes) * 100
 
-    let status: 'on-track' | 'at-risk' | 'breached' = 'on-track'
-    if (percentageUsed >= 100) status = 'breached'
-    else if (percentageUsed >= 75) status = 'at-risk'
+    let status: 'on-track' | 'at-risk' | 'breached' | 'met' = 'on-track'
+
+    if (percentageUsed >= 100) {
+        status = 'breached'
+    } else if (resolvedDate) {
+        status = 'met'
+    } else if (percentageUsed >= 75) {
+        status = 'at-risk'
+    }
 
     const statusColors = {
         'on-track': 'bg-green-500',
         'at-risk': 'bg-amber-500',
-        'breached': 'bg-red-500'
+        'breached': 'bg-red-500',
+        'met': 'bg-teal-500'
     }
 
     const formatTime = (minutes: number) => {
@@ -58,10 +65,12 @@ export function SLATimer({
                 <span className={cn(
                     "font-medium",
                     status === 'breached' ? "text-red-600" :
-                        status === 'at-risk' ? "text-amber-600" : "text-green-600"
+                        status === 'at-risk' ? "text-amber-600" :
+                            status === 'met' ? "text-teal-600" : "text-green-600"
                 )}>
                     {status === 'breached' ? 'Breached' :
-                        status === 'at-risk' ? 'At Risk' : 'On Track'}
+                        status === 'at-risk' ? 'At Risk' :
+                            status === 'met' ? 'Met' : 'On Track'}
                 </span>
                 <span className="text-muted-foreground">
                     {formatTime(timeRemaining)} left

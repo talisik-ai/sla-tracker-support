@@ -90,6 +90,12 @@ export const useSLAStore = create<SLAStore>()(
         }),
         {
             name: 'sla-settings-storage',
+            partialize: (state) => ({
+                rules: state.rules,
+                businessHours: state.businessHours,
+                holidays: state.holidays,
+                projectKey: state.projectKey,
+            }),
         }
     )
 )
