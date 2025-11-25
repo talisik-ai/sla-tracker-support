@@ -322,7 +322,7 @@ function IssuesPage() {
             )}
 
             {/* Sticky Filter Bar */}
-            <div className="sticky top-14 z-40 bg-background pb-4 space-y-4 border-b mb-4">
+            <div className="sticky top-14 z-40 bg-background pb-4 space-y-6 border-b mb-6 pt-2">
                 {/* Search */}
                 <div className="flex gap-4">
                     <input
@@ -335,7 +335,7 @@ function IssuesPage() {
                 </div>
 
                 {/* Tabs */}
-                <div className="flex gap-2 overflow-x-auto pb-2 -mb-2 hide-scrollbar">
+                <div className="flex gap-2 overflow-x-auto pb-4 -mb-2 hide-scrollbar">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -473,16 +473,16 @@ function IssuesPage() {
             </div>
 
             {/* Issues List */}
-            <div className="grid gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {paginatedIssues.map(({ issue, sla }) => (
                     <Card
                         key={issue.id}
-                        className="hover:shadow-md transition-shadow cursor-pointer"
+                        className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
                         onClick={() => setSelectedIssue({ issue, sla })}
                     >
-                        <CardContent className="p-4 sm:p-6">
-                            <div className="flex flex-col gap-3">
-                                <div className="space-y-2">
+                        <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
+                            <div className="flex flex-col gap-3 flex-1">
+                                <div className="space-y-2 flex-1">
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <span className="font-mono font-medium text-primary text-sm">{issue.key}</span>
                                         <Badge variant={
