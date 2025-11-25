@@ -6,9 +6,6 @@
   "installCommand": "npm ci",
   "devCommand": "npm run dev",
   "regions": ["sin1"],
-  "env": {
-    "NODE_ENV": "production"
-  },
   "headers": [
     {
       "source": "/api/(.*)",
