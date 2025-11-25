@@ -11,6 +11,8 @@ import { getAllProjectIssues } from '@/lib/jira/api'
 import { useSLAStore } from '@/lib/sla/store'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
 import { ChevronLeft, ChevronRight, SlidersHorizontal, ArrowUpDown } from 'lucide-react'
+import { SSEClient } from '@/lib/events/sse-client'
+import { useNotificationStore } from '@/lib/notifications/store'
 import {
     Sheet,
     SheetContent,
@@ -69,6 +71,8 @@ function IssuesPage() {
 
     const [searchQuery, setSearchQuery] = React.useState('')
     const [selectedIssue, setSelectedIssue] = React.useState<{ issue: JiraIssue, sla: SLAData } | null>(null)
+    const sseClientRef = React.useRef<SSEClient | null>(null)
+    const { addNotification } = useNotificationStore()
 
     const store = useSLAStore()
     const projectKey = store.projectKey
@@ -101,7 +105,69 @@ function IssuesPage() {
         }
 
         loadData()
-    }, [settings, projectKey])
+
+        // Setup SSE for real-time updates
+        const sseClient = new SSEClient('/api/events/stream')
+        sseClientRef.current = sseClient
+
+        sseClient.connect({
+            'connected': (data) => {
+                console.log('[Issues] Connected to SSE stream:', data.clientId)
+            },
+            'issue-created': (data) => {
+                console.log('[Issues] New issue created:', data.issueKey)
+                loadData() // Reload to get new issue
+                addNotification({
+                    type: 'success',
+                    title: 'New Issue',
+                    message: `${data.issueKey} was created`,
+                    link: `/issues?search=${data.issueKey}`
+                })
+            },
+            'issue-updated': (data) => {
+                console.log('[Issues] Issue updated:', data.issueKey)
+                setIssues(prev => {
+                    const index = prev.findIndex(i => i.issue.key === data.issueKey)
+                    if (index !== -1) {
+                        // Optimistic update or reload
+                        // For now, we just update the SLA if we have the full issue data in payload
+                        if (data.issue) {
+                            const updated = [...prev]
+                            updated[index] = {
+                                issue: data.issue,
+                                sla: calculateSLA(data.issue, settings)
+                            }
+                            return updated
+                        }
+                        // If no issue data, better reload
+                        loadData()
+                        return prev
+                    }
+                    return prev
+                })
+                addNotification({
+                    type: 'info',
+                    title: 'Issue Updated',
+                    message: `${data.issueKey} was updated`,
+                    link: `/issues?search=${data.issueKey}`
+                })
+            },
+            'issue-deleted': (data) => {
+                console.log('[Issues] Issue deleted:', data.issueKey)
+                setIssues(prev => prev.filter(i => i.issue.key !== data.issueKey))
+                addNotification({
+                    type: 'warning',
+                    title: 'Issue Deleted',
+                    message: `${data.issueKey} was deleted`
+                })
+            }
+        })
+
+        return () => {
+            console.log('[Issues] Disconnecting SSE...')
+            sseClient.disconnect()
+        }
+    }, [settings, projectKey, addNotification])
 
     // Filter issues based on active tab, search, and assignee
     const filteredIssues = React.useMemo(() => {

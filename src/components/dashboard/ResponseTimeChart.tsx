@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
@@ -25,7 +26,7 @@ const chartConfig = {
     },
 }
 
-export function ResponseTimeChart({ data }: ResponseTimeChartProps) {
+export const ResponseTimeChart = React.memo(function ResponseTimeChart({ data }: ResponseTimeChartProps) {
     if (!data || data.length === 0) {
         return (
             <Card>
@@ -103,4 +104,4 @@ export function ResponseTimeChart({ data }: ResponseTimeChartProps) {
             </CardContent>
         </Card>
     )
-}
+})

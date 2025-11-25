@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, ReferenceLine } from 'recharts'
@@ -19,7 +20,7 @@ const chartConfig = {
     },
 }
 
-export function SLAComplianceChart({ data }: SLAComplianceChartProps) {
+export const SLAComplianceChart = React.memo(function SLAComplianceChart({ data }: SLAComplianceChartProps) {
     if (!data || data.length === 0) {
         return (
             <Card>
@@ -108,4 +109,4 @@ export function SLAComplianceChart({ data }: SLAComplianceChartProps) {
             </CardContent>
         </Card>
     )
-}
+})

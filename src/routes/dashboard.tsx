@@ -14,11 +14,13 @@ import { useSLAStore } from '@/lib/sla/store'
 import { batchCheckNotifications } from '@/lib/notifications/helpers'
 import { SSEClient } from '@/lib/events/sse-client'
 import { useNotificationStore } from '@/lib/notifications/store'
-import { IssueStatusChart } from '@/components/dashboard/IssueStatusChart'
-import { ResponseTimeChart } from '@/components/dashboard/ResponseTimeChart'
-import { SLAComplianceChart } from '@/components/dashboard/SLAComplianceChart'
 import { IssueDetailModal } from '@/components/issues/IssueDetailModal'
 import '@/lib/notifications/demo' // Make demo function available in console
+
+// Lazy load charts for better initial load performance
+const IssueStatusChart = React.lazy(() => import('@/components/dashboard/IssueStatusChart').then(m => ({ default: m.IssueStatusChart })))
+const ResponseTimeChart = React.lazy(() => import('@/components/dashboard/ResponseTimeChart').then(m => ({ default: m.ResponseTimeChart })))
+const SLAComplianceChart = React.lazy(() => import('@/components/dashboard/SLAComplianceChart').then(m => ({ default: m.SLAComplianceChart })))
 
 export const Route = createFileRoute('/dashboard')({
     component: DashboardPage,
@@ -329,11 +331,17 @@ function DashboardPage() {
             <div className="space-y-4">
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Analytics</h2>
                 <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-                    <IssueStatusChart data={issueStatusData} />
-                    <ResponseTimeChart data={responseTimeData} />
+                    <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
+                        <IssueStatusChart data={issueStatusData} />
+                    </React.Suspense>
+                    <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
+                        <ResponseTimeChart data={responseTimeData} />
+                    </React.Suspense>
                 </div>
                 <div className="grid gap-4">
-                    <SLAComplianceChart data={complianceData} />
+                    <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
+                        <SLAComplianceChart data={complianceData} />
+                    </React.Suspense>
                 </div>
             </div>
 

@@ -9,7 +9,7 @@ interface SLATimerProps {
     className?: string
 }
 
-export function SLATimer({
+export const SLATimer = React.memo(function SLATimer({
     deadlineHours,
     createdDate,
     resolvedDate,
@@ -84,4 +84,4 @@ export function SLATimer({
             </div>
         </div>
     )
-}
+})

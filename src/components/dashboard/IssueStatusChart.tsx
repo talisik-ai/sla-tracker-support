@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
@@ -32,7 +33,7 @@ const chartConfig = {
     },
 }
 
-export function IssueStatusChart({ data }: IssueStatusChartProps) {
+export const IssueStatusChart = React.memo(function IssueStatusChart({ data }: IssueStatusChartProps) {
     const chartData = [
         { name: 'Met', value: data.met, fill: chartConfig.met.color },
         { name: 'At Risk', value: data.atRisk, fill: chartConfig.atRisk.color },
@@ -115,4 +116,4 @@ export function IssueStatusChart({ data }: IssueStatusChartProps) {
             </CardContent>
         </Card>
     )
-}
+})
