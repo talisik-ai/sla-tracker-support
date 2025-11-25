@@ -16,6 +16,7 @@ import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiHealthRouteImport } from './routes/api.health'
+import { Route as ApiDebugRouteImport } from './routes/api.debug'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
@@ -63,6 +64,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDebugRoute = ApiDebugRouteImport.update({
+  id: '/api/debug',
+  path: '/api/debug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/issues': typeof IssuesRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/api/debug': typeof ApiDebugRoute
   '/api/health': typeof ApiHealthRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/issues': typeof IssuesRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/api/debug': typeof ApiDebugRoute
   '/api/health': typeof ApiHealthRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/issues': typeof IssuesRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/api/debug': typeof ApiDebugRoute
   '/api/health': typeof ApiHealthRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/reports'
     | '/settings'
+    | '/api/debug'
     | '/api/health'
     | '/api/events/stream'
     | '/api/jira/search'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/reports'
     | '/settings'
+    | '/api/debug'
     | '/api/health'
     | '/api/events/stream'
     | '/api/jira/search'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/reports'
     | '/settings'
+    | '/api/debug'
     | '/api/health'
     | '/api/events/stream'
     | '/api/jira/search'
@@ -275,6 +287,7 @@ export interface RootRouteChildren {
   IssuesRoute: typeof IssuesRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
+  ApiDebugRoute: typeof ApiDebugRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ApiEventsStreamRoute: typeof ApiEventsStreamRoute
   ApiJiraSearchRoute: typeof ApiJiraSearchRoute
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/api/health'
       fullPath: '/api/health'
       preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/debug': {
+      id: '/api/debug'
+      path: '/api/debug'
+      fullPath: '/api/debug'
+      preLoaderRoute: typeof ApiDebugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/start/server-funcs': {
@@ -443,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   IssuesRoute: IssuesRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
+  ApiDebugRoute: ApiDebugRoute,
   ApiHealthRoute: ApiHealthRoute,
   ApiEventsStreamRoute: ApiEventsStreamRoute,
   ApiJiraSearchRoute: ApiJiraSearchRoute,
