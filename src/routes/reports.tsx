@@ -99,6 +99,8 @@ function ReportsPage() {
 
     // Calculate Developer Performance Data
     const developerData = React.useMemo((): DeveloperReportData[] => {
+        if (issues.length === 0) return []
+
         const uniqueAssignees = new Map<string, { accountId: string, displayName: string, avatarUrl: string }>()
 
         issues.forEach(i => {
@@ -131,11 +133,13 @@ function ReportsPage() {
                 metSLA: dev.metCount,
                 breached: dev.breachedCount,
                 atRisk: dev.atRiskCount,
-                complianceRate: dev.complianceRate,
-                avgResponseTime: dev.avgFirstResponseTime,
-                avgResolutionTime: dev.avgResolutionTime
+                complianceRate: isNaN(dev.complianceRate) ? 0 : dev.complianceRate,
+                avgResponseTime: isNaN(dev.avgFirstResponseTime) ? 0 : dev.avgFirstResponseTime,
+                avgResolutionTime: isNaN(dev.avgResolutionTime) ? 0 : dev.avgResolutionTime
             }))
         }
+
+        if (developers.length === 0) return []
 
         const perfData = calculateDeveloperPerformance(issues, developers)
         return perfData.map(dev => ({
@@ -144,9 +148,9 @@ function ReportsPage() {
             metSLA: dev.metCount,
             breached: dev.breachedCount,
             atRisk: dev.atRiskCount,
-            complianceRate: dev.complianceRate,
-            avgResponseTime: dev.avgFirstResponseTime,
-            avgResolutionTime: dev.avgResolutionTime
+            complianceRate: isNaN(dev.complianceRate) ? 0 : dev.complianceRate,
+            avgResponseTime: isNaN(dev.avgFirstResponseTime) ? 0 : dev.avgFirstResponseTime,
+            avgResolutionTime: isNaN(dev.avgResolutionTime) ? 0 : dev.avgResolutionTime
         }))
     }, [issues])
 
@@ -179,31 +183,55 @@ function ReportsPage() {
         setExporting(`${reportType}-${format}`)
         
         try {
-            await new Promise(resolve => setTimeout(resolve, 500)) // Brief delay for UX
+            // Brief delay for UX
+            await new Promise(resolve => setTimeout(resolve, 300))
             
             const timestamp = new Date().toISOString().split('T')[0]
             
             switch (reportType) {
                 case 'sla-summary':
-                    if (format === 'xlsx') exportSLASummaryToExcel(slaSummary, `sla-summary-${timestamp}`)
-                    else if (format === 'pdf') exportSLASummaryToPDF(slaSummary, `sla-summary-${timestamp}`)
-                    else exportSLASummaryToMarkdown(slaSummary, `sla-summary-${timestamp}`)
+                    if (format === 'xlsx') {
+                        await exportSLASummaryToExcel(slaSummary, `sla-summary-${timestamp}`)
+                    } else if (format === 'pdf') {
+                        await exportSLASummaryToPDF(slaSummary, `sla-summary-${timestamp}`)
+                    } else {
+                        exportSLASummaryToMarkdown(slaSummary, `sla-summary-${timestamp}`)
+                    }
                     break
                 
                 case 'developer-performance':
-                    if (format === 'xlsx') exportDeveloperPerformanceToExcel(developerData, `developer-performance-${timestamp}`)
-                    else if (format === 'pdf') exportDeveloperPerformanceToPDF(developerData, `developer-performance-${timestamp}`)
-                    else exportDeveloperPerformanceToMarkdown(developerData, `developer-performance-${timestamp}`)
+                    if (developerData.length === 0) {
+                        alert('No developer data available to export.')
+                        return
+                    }
+                    if (format === 'xlsx') {
+                        await exportDeveloperPerformanceToExcel(developerData, `developer-performance-${timestamp}`)
+                    } else if (format === 'pdf') {
+                        await exportDeveloperPerformanceToPDF(developerData, `developer-performance-${timestamp}`)
+                    } else {
+                        exportDeveloperPerformanceToMarkdown(developerData, `developer-performance-${timestamp}`)
+                    }
                     break
                 
                 case 'issue-status':
-                    if (format === 'xlsx') exportIssueStatusToExcel(issueData, `issue-status-${timestamp}`)
-                    else if (format === 'pdf') exportIssueStatusToPDF(issueData, `issue-status-${timestamp}`)
-                    else exportIssueStatusToMarkdown(issueData, `issue-status-${timestamp}`)
+                    if (issueData.length === 0) {
+                        alert('No issue data available to export.')
+                        return
+                    }
+                    if (format === 'xlsx') {
+                        await exportIssueStatusToExcel(issueData, `issue-status-${timestamp}`)
+                    } else if (format === 'pdf') {
+                        await exportIssueStatusToPDF(issueData, `issue-status-${timestamp}`)
+                    } else {
+                        exportIssueStatusToMarkdown(issueData, `issue-status-${timestamp}`)
+                    }
                     break
             }
+            
+            console.log(`[Reports] Successfully exported ${reportType} as ${format}`)
         } catch (error) {
-            console.error('Export failed:', error)
+            console.error('[Reports] Export failed:', error)
+            alert(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
         } finally {
             setExporting(null)
         }
