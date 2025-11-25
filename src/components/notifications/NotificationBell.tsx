@@ -125,11 +125,11 @@ export function NotificationBell() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
-                                onClick={markAllAsRead}
-                            >
-                                Mark all as read
-                            </Button>
-                        )}
+                            onClick={markAllAsRead}
+                        >
+                            Mark all as read
+                        </Button>
+                    )}
                     </div>
                 </div>
                 <ScrollArea className="h-[400px]">

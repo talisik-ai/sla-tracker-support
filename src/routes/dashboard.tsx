@@ -252,33 +252,33 @@ function DashboardPage() {
             {/* Sticky Header */}
             <div className="sticky top-14 z-40 bg-background pb-4 mb-4">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                    <div>
+                <div>
                         <div className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 flex items-center gap-2 flex-wrap">
                             <span className="truncate">{projectInfo ? `${projectInfo.name} (${projectInfo.id})` : 'Loading project info...'}</span>
-                            {/* Real-time connection indicator */}
-                            {isConnected && (
-                                <span className="flex items-center gap-1 text-green-600 text-xs">
-                                    <span className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                    </span>
-                                    Live
+                        {/* Real-time connection indicator */}
+                        {isConnected && (
+                            <span className="flex items-center gap-1 text-green-600 text-xs">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                                 </span>
-                            )}
-                        </div>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+                                Live
+                            </span>
+                        )}
                     </div>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => loadData()}
-                        disabled={isRefreshing}
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+                </div>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => loadData()}
+                    disabled={isRefreshing}
                         className="w-full sm:w-auto"
-                    >
-                        <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                >
+                    <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                         <span className="hidden sm:inline">{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
                         <span className="sm:hidden">Refresh</span>
-                    </Button>
+                </Button>
                 </div>
             </div>
 
@@ -332,15 +332,15 @@ function DashboardPage() {
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Analytics</h2>
                 <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                     <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
-                        <IssueStatusChart data={issueStatusData} />
+                    <IssueStatusChart data={issueStatusData} />
                     </React.Suspense>
                     <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
-                        <ResponseTimeChart data={responseTimeData} />
+                    <ResponseTimeChart data={responseTimeData} />
                     </React.Suspense>
                 </div>
                 <div className="grid gap-4">
                     <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
-                        <SLAComplianceChart data={complianceData} />
+                    <SLAComplianceChart data={complianceData} />
                     </React.Suspense>
                 </div>
             </div>

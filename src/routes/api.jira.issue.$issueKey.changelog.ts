@@ -2,78 +2,86 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import axios from 'axios'
 
+// Helper to get environment variables at runtime
+// This is critical for serverless environments like Vercel
+function getEnvVars() {
+    const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
+    const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
+    const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
+    
+    const authHeader = JIRA_API_TOKEN && JIRA_EMAIL
+        ? `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`
+        : ''
+    
+    return { JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, authHeader }
+}
+
 export const Route = createFileRoute('/api/jira/issue/$issueKey/changelog')({
-  server: {
-    handlers: {
-      GET: async ({ params }) => {
-        console.log('[Server Proxy] Received request for changelog:', params.issueKey)
+    server: {
+        handlers: {
+            GET: async ({ params }) => {
+                console.log('[Server Proxy] Received request for changelog:', params.issueKey)
 
-        // Read environment variables at runtime (not module load time)
-        // This is important for serverless environments like Vercel
-        const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
-        const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
-        const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
+                // Read environment variables at RUNTIME (not module load time)
+                const { JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, authHeader } = getEnvVars()
 
-        // Check if credentials are configured
-        if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN) {
-          console.error('[Server Proxy] Missing Jira credentials')
-          return json(
-            { error: 'Jira credentials not configured on server' },
-            { status: 500 }
-          )
-        }
+                // Check if credentials are configured
+                if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN) {
+                    console.error('[Server Proxy] Missing Jira credentials')
+                    return json(
+                        { error: 'Jira credentials not configured on server' },
+                        { status: 500 }
+                    )
+                }
 
-        // Create auth header at runtime
-        const authHeader = `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`
+                const { issueKey } = params
 
-        const { issueKey } = params
+                if (!issueKey) {
+                    return json(
+                        { error: 'Issue key is required' },
+                        { status: 400 }
+                    )
+                }
 
-        if (!issueKey) {
-          return json(
-            { error: 'Issue key is required' },
-            { status: 400 }
-          )
-        }
+                console.log('[Server Proxy] Fetching changelog for issue:', issueKey)
 
-        console.log('[Server Proxy] Fetching changelog for issue:', issueKey)
+                try {
+                    // Request changelog from Jira API
+                    const response = await axios.get(
+                        `${JIRA_BASE_URL}/rest/api/3/issue/${issueKey}/changelog`,
+                        {
+                            headers: {
+                                'Authorization': authHeader,
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                            timeout: 10000,
+                        }
+                    )
 
-        try {
-          // Request changelog from Jira API
-          const response = await axios.get(
-            `${JIRA_BASE_URL}/rest/api/3/issue/${issueKey}/changelog`,
-            {
-              headers: {
-                'Authorization': authHeader,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-              },
-              timeout: 10000,
-            }
-          )
+                    console.log(`[Server Proxy] Successfully fetched changelog for ${issueKey}`)
 
-          console.log(`[Server Proxy] Successfully fetched changelog for ${issueKey}`)
+                    // Return the changelog data to the client
+                    return json(response.data)
+                } catch (error: any) {
+                    console.error('[Server Proxy] Jira Changelog API Error:', error.message)
+                    if (error.response) {
+                        console.error('[Server Proxy] Error response:', {
+                            status: error.response.status,
+                            data: JSON.stringify(error.response.data).substring(0, 200),
+                        })
+                    }
 
-          // Return the changelog data to the client
-          return json(response.data)
-        } catch (error: any) {
-          console.error('[Server Proxy] Jira Changelog API Error:', error.message)
-          if (error.response) {
-            console.error('[Server Proxy] Error response:', {
-              status: error.response.status,
-              data: JSON.stringify(error.response.data).substring(0, 200),
-            })
-          }
-
-          return json(
-            {
-              error: 'Failed to fetch changelog from Jira API',
-              details: error.message,
-              status: error.response?.status,
+                    return json(
+                        {
+                            error: 'Failed to fetch changelog from Jira API',
+                            details: error.message,
+                            status: error.response?.status,
+                        },
+                        { status: error.response?.status || 500 }
+                    )
+                }
             },
-            { status: error.response?.status || 500 }
-          )
-        }
-      },
+        },
     },
-  },
 })
