@@ -100,15 +100,18 @@ function SettingsPage() {
         URL.revokeObjectURL(url)
     }
 
+    // Import result state for dialog
+    const [importResult, setImportResult] = React.useState<{ success: boolean; message: string } | null>(null)
+
     const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (file) {
             file.text().then((text) => {
                 const success = importSettings(text)
                 if (success) {
-                    alert('Settings imported successfully!')
+                    setImportResult({ success: true, message: 'Settings imported successfully!' })
                 } else {
-                    alert('Failed to import settings. Please check the file format.')
+                    setImportResult({ success: false, message: 'Failed to import settings. Please check the file format.' })
                 }
             })
         }
@@ -400,6 +403,25 @@ function SettingsPage() {
                         Export your current settings to a JSON file to share with team members.
                         They can import it to use the same SLA configuration.
                     </p>
+                    
+                    {/* Import Result Dialog */}
+                    <AlertDialog open={importResult !== null} onOpenChange={(open) => !open && setImportResult(null)}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    {importResult?.success ? '✅ Import Successful' : '❌ Import Failed'}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    {importResult?.message}
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogAction onClick={() => setImportResult(null)}>
+                                    OK
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </CardContent>
             </Card>
 
@@ -517,20 +539,36 @@ function SettingsPage() {
                                     You have {notifications.length} notifications stored
                                 </p>
                             </div>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-destructive hover:text-destructive"
-                                onClick={() => {
-                                    if (window.confirm('Are you sure you want to clear all notifications?')) {
-                                        clearNotifications()
-                                    }
-                                }}
-                                disabled={notifications.length === 0}
-                            >
-                                <Trash2 className="h-4 w-4 mr-1" />
-                                Clear All
-                            </Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-destructive hover:text-destructive"
+                                        disabled={notifications.length === 0}
+                                    >
+                                        <Trash2 className="h-4 w-4 mr-1" />
+                                        Clear All
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Clear all notifications?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will permanently remove all {notifications.length} notifications. This action cannot be undone.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction 
+                                            onClick={clearNotifications}
+                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                        >
+                                            Clear All
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </div>
                 </CardContent>

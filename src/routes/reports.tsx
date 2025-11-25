@@ -21,6 +21,15 @@ import {
     CheckCircle2
 } from 'lucide-react'
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
     exportSLASummaryToExcel,
     exportSLASummaryToPDF,
     exportSLASummaryToMarkdown,
@@ -44,6 +53,7 @@ function ReportsPage() {
     const [issues, setIssues] = React.useState<Array<{ issue: JiraIssue, sla: SLAData }>>([])
     const [loading, setLoading] = React.useState(true)
     const [exporting, setExporting] = React.useState<string | null>(null)
+    const [exportAlert, setExportAlert] = React.useState<{ type: 'error' | 'warning'; message: string } | null>(null)
 
     const store = useSLAStore()
     const projectKey = store.projectKey
@@ -227,7 +237,7 @@ function ReportsPage() {
                 
                 case 'developer-performance':
                     if (developerData.length === 0) {
-                        alert('No developer data available to export.')
+                        setExportAlert({ type: 'warning', message: 'No developer data available to export.' })
                         return
                     }
                     console.log('[Reports] Exporting developer data:', developerData)
@@ -242,7 +252,7 @@ function ReportsPage() {
                 
                 case 'issue-status':
                     if (issueData.length === 0) {
-                        alert('No issue data available to export.')
+                        setExportAlert({ type: 'warning', message: 'No issue data available to export.' })
                         return
                     }
                     if (format === 'xlsx') {
@@ -258,7 +268,10 @@ function ReportsPage() {
             console.log(`[Reports] Successfully exported ${reportType} as ${format}`)
         } catch (error) {
             console.error('[Reports] Export failed:', error)
-            alert(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+            setExportAlert({ 
+                type: 'error', 
+                message: `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}` 
+            })
         } finally {
             setExporting(null)
         }
@@ -533,6 +546,35 @@ function ReportsPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Export Alert Dialog */}
+            <AlertDialog open={exportAlert !== null} onOpenChange={(open) => !open && setExportAlert(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2">
+                            {exportAlert?.type === 'error' ? (
+                                <>
+                                    <AlertCircle className="h-5 w-5 text-destructive" />
+                                    Export Failed
+                                </>
+                            ) : (
+                                <>
+                                    <AlertCircle className="h-5 w-5 text-amber-500" />
+                                    No Data Available
+                                </>
+                            )}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {exportAlert?.message}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction onClick={() => setExportAlert(null)}>
+                            OK
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

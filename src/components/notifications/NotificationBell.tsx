@@ -8,6 +8,17 @@ import { useNotificationStore, Notification } from '@/lib/notifications/store'
 import { getNotificationSettings, saveNotificationSettings, playNotificationSound } from '@/lib/notifications/helpers'
 import { formatDistanceToNow } from 'date-fns'
 import { Link } from '@tanstack/react-router'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export function NotificationBell() {
     const { notifications, unreadCount, markAsRead, markAllAsRead, clearNotifications } = useNotificationStore()
@@ -152,19 +163,35 @@ export function NotificationBell() {
                 {/* Clear All Footer */}
                 {notifications.length > 0 && (
                     <div className="border-t px-4 py-2">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-full text-xs text-muted-foreground hover:text-destructive"
-                            onClick={() => {
-                                if (window.confirm('Are you sure you want to clear all notifications?')) {
-                                    clearNotifications()
-                                }
-                            }}
-                        >
-                            <Trash2 className="h-3 w-3 mr-1" />
-                            Clear all notifications
-                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="w-full text-xs text-muted-foreground hover:text-destructive"
+                                >
+                                    <Trash2 className="h-3 w-3 mr-1" />
+                                    Clear all notifications
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Clear all notifications?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This will permanently remove all {notifications.length} notifications. This action cannot be undone.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                        onClick={clearNotifications}
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                        Clear All
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 )}
             </PopoverContent>
