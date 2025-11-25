@@ -73,6 +73,36 @@ The application works perfectly out-of-the-box with mock data - **no configurati
 
 You can change the project key anytime in **Settings** → **Jira Project** section.
 
+## 📡 Real-time Updates (Webhooks)
+
+To enable real-time updates without manual refreshing, you need to configure Jira Webhooks.
+
+### Local Development (Using ngrok)
+
+Since Jira Cloud cannot reach `localhost`, you need a tunnel:
+
+1.  **Install ngrok**: [https://ngrok.com/download](https://ngrok.com/download)
+2.  **Start tunnel**:
+    ```bash
+    ngrok http 3000
+    ```
+3.  Copy the forwarding URL (e.g., `https://your-id.ngrok-free.app`)
+
+### Configuring Jira
+
+1.  Go to **Jira Settings** → **System** → **Webhooks**
+2.  Click **Create a Webhook**
+3.  **Name**: `SLA Tracker Local`
+4.  **URL**: `https://your-id.ngrok-free.app/api/webhooks/jira`
+5.  **Events**: Check the following under "Issue":
+    - [x] created
+    - [x] updated
+    - [x] deleted
+6.  **JQL Filter** (Optional): `project = "YOUR_PROJECT_KEY"`
+7.  Click **Create**
+
+Now, any change in Jira will instantly update your local dashboard!
+
 ### Security Notes
 
 - ⚠️ **Never commit `.env.local` to git** (it's already in `.gitignore`)
