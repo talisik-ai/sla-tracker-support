@@ -2,22 +2,27 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import axios from 'axios'
 
-// Server-side environment variables (no VITE_ prefix for security)
-const PROJECT_KEY = process.env.JIRA_PROJECT_KEY || process.env.VITE_JIRA_PROJECT_KEY || 'SAL'
-const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
-const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
-const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
-
-// Server-side base64 encoding for Node.js
-const authHeader = JIRA_API_TOKEN && JIRA_EMAIL
-    ? `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`
-    : ''
-
 export const Route = createFileRoute('/api/jira/search')({
     server: {
         handlers: {
             GET: async ({ request }) => {
                 console.log('[Server Proxy] Received request for Jira search')
+
+                // Read environment variables at runtime (not module load time)
+                // This is important for serverless environments like Vercel
+                const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
+                const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
+                const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
+                const PROJECT_KEY = process.env.JIRA_PROJECT_KEY || process.env.VITE_JIRA_PROJECT_KEY || 'SAL'
+
+                // Debug: Log which env vars are available (without exposing values)
+                console.log('[Server Proxy] Environment check:', {
+                    hasJiraUrl: !!JIRA_BASE_URL,
+                    hasEmail: !!JIRA_EMAIL,
+                    hasToken: !!JIRA_API_TOKEN,
+                    hasProjectKey: !!PROJECT_KEY,
+                    jiraUrlPrefix: JIRA_BASE_URL?.substring(0, 20) + '...',
+                })
 
                 // Check if credentials are configured
                 if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN) {
@@ -31,6 +36,9 @@ export const Route = createFileRoute('/api/jira/search')({
                         { status: 500 }
                     )
                 }
+
+                // Create auth header at runtime
+                const authHeader = `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`
 
                 // Parse query parameters from the request URL
                 const url = new URL(request.url)
@@ -79,7 +87,7 @@ export const Route = createFileRoute('/api/jira/search')({
                     if (error.response) {
                         console.error('[Server Proxy] Error response:', {
                             status: error.response.status,
-                            data: JSON.stringify(error.response.data).substring(0, 200), // Log first 200 chars
+                            data: JSON.stringify(error.response.data).substring(0, 500),
                         })
                     }
 
