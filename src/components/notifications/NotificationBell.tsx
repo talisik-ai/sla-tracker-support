@@ -1,22 +1,53 @@
 import * as React from 'react'
-import { Bell } from 'lucide-react'
+import { Bell, Trash2, Settings, Volume2, VolumeX } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNotificationStore } from '@/lib/notifications/store'
+import { useNotificationStore, Notification } from '@/lib/notifications/store'
+import { getNotificationSettings, saveNotificationSettings, playNotificationSound } from '@/lib/notifications/helpers'
 import { formatDistanceToNow } from 'date-fns'
 import { Link } from '@tanstack/react-router'
 
 export function NotificationBell() {
-    const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotificationStore()
+    const { notifications, unreadCount, markAsRead, markAllAsRead, clearNotifications } = useNotificationStore()
     const [open, setOpen] = React.useState(false)
+    const [soundEnabled, setSoundEnabled] = React.useState(false)
     const count = unreadCount()
+    const prevCountRef = React.useRef(count)
+
+    // Load sound setting on mount
+    React.useEffect(() => {
+        const settings = getNotificationSettings()
+        setSoundEnabled(settings.soundEnabled)
+    }, [])
+
+    // Play sound when new notifications arrive
+    React.useEffect(() => {
+        if (count > prevCountRef.current && soundEnabled) {
+            const latestNotification = notifications[0]
+            if (latestNotification) {
+                playNotificationSound(latestNotification.type)
+            }
+        }
+        prevCountRef.current = count
+    }, [count, notifications, soundEnabled])
 
     const handleNotificationClick = (id: string, link?: string) => {
         markAsRead(id)
         if (link) {
             setOpen(false)
+        }
+    }
+
+    const toggleSound = () => {
+        const newValue = !soundEnabled
+        setSoundEnabled(newValue)
+        saveNotificationSettings({ soundEnabled: newValue })
+        
+        // Play a test sound when enabling
+        if (newValue) {
+            playNotificationSound('info')
         }
     }
 
@@ -49,16 +80,46 @@ export function NotificationBell() {
             <PopoverContent className="w-80 p-0" align="end">
                 <div className="flex items-center justify-between border-b px-4 py-3">
                     <h3 className="font-semibold text-sm">Notifications</h3>
-                    {count > 0 && (
+                    <div className="flex items-center gap-1">
+                        {/* Sound Toggle */}
                         <Button
                             variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
-                            onClick={markAllAsRead}
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={toggleSound}
+                            title={soundEnabled ? 'Disable sound' : 'Enable sound'}
                         >
-                            Mark all as read
+                            {soundEnabled ? (
+                                <Volume2 className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                                <VolumeX className="h-4 w-4 text-muted-foreground" />
+                            )}
                         </Button>
-                    )}
+                        
+                        {/* Settings Link */}
+                        <Link to="/settings" onClick={() => setOpen(false)}>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7"
+                                title="Notification settings"
+                            >
+                                <Settings className="h-4 w-4 text-muted-foreground" />
+                            </Button>
+                        </Link>
+                        
+                        {/* Mark All as Read */}
+                        {count > 0 && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+                                onClick={markAllAsRead}
+                            >
+                                Mark all as read
+                            </Button>
+                        )}
+                    </div>
                 </div>
                 <ScrollArea className="h-[400px]">
                     {notifications.length === 0 ? (
@@ -87,16 +148,35 @@ export function NotificationBell() {
                         </div>
                     )}
                 </ScrollArea>
+                
+                {/* Clear All Footer */}
+                {notifications.length > 0 && (
+                    <div className="border-t px-4 py-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full text-xs text-muted-foreground hover:text-destructive"
+                            onClick={() => {
+                                if (window.confirm('Are you sure you want to clear all notifications?')) {
+                                    clearNotifications()
+                                }
+                            }}
+                        >
+                            <Trash2 className="h-3 w-3 mr-1" />
+                            Clear all notifications
+                        </Button>
+                    </div>
+                )}
             </PopoverContent>
         </Popover>
     )
 }
 
-function NotificationContent({ notification, getIcon }: { notification: any; getIcon: (type: string) => string }) {
+function NotificationContent({ notification, getIcon }: { notification: Notification; getIcon: (type: string) => string }) {
     return (
         <>
             <div className="flex items-start gap-3">
-                <span className="text-xl flex-shrink-0">{getIcon(notification.type)}</span>
+                <span className="text-xl shrink-0">{getIcon(notification.type)}</span>
                 <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between gap-2">
                         <p className="text-sm font-medium leading-none">{notification.title}</p>

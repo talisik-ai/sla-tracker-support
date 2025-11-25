@@ -7,11 +7,13 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { RotateCcw, Plus, Trash2, Calendar, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react'
+import { RotateCcw, Plus, Trash2, Calendar, RefreshCw, CheckCircle2, AlertCircle, Bell, Mail, Volume2, Moon } from 'lucide-react'
 import { bulkSyncSLAToJira, getSyncSummary, type SyncResult } from '@/lib/jira/sla-sync'
 import { getAllProjectIssues } from '@/lib/jira/api'
 import { calculateSLA } from '@/lib/sla/calculator'
 import { JIRA_CUSTOM_FIELDS } from '@/lib/jira/custom-fields'
+import { getNotificationSettings, saveNotificationSettings, playNotificationSound, type NotificationSettings } from '@/lib/notifications/helpers'
+import { useNotificationStore } from '@/lib/notifications/store'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -46,6 +48,26 @@ function SettingsPage() {
 
     const [newHoliday, setNewHoliday] = React.useState('')
     const fileInputRef = React.useRef<HTMLInputElement>(null)
+
+    // Notification Settings State
+    const [notifSettings, setNotifSettings] = React.useState<NotificationSettings>(() => getNotificationSettings())
+    const { clearNotifications, notifications } = useNotificationStore()
+
+    // Load notification settings on mount
+    React.useEffect(() => {
+        setNotifSettings(getNotificationSettings())
+    }, [])
+
+    const updateNotifSetting = <K extends keyof NotificationSettings>(key: K, value: NotificationSettings[K]) => {
+        const updated = { ...notifSettings, [key]: value }
+        setNotifSettings(updated)
+        saveNotificationSettings({ [key]: value })
+        
+        // Play test sound when enabling
+        if (key === 'soundEnabled' && value === true) {
+            playNotificationSound('info')
+        }
+    }
 
     // Bulk Sync State
     const [isSyncing, setIsSyncing] = React.useState(false)
@@ -378,6 +400,139 @@ function SettingsPage() {
                         Export your current settings to a JSON file to share with team members.
                         They can import it to use the same SLA configuration.
                     </p>
+                </CardContent>
+            </Card>
+
+            {/* Notification Settings */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Bell className="h-5 w-5" />
+                        Notification Settings
+                    </CardTitle>
+                    <CardDescription>
+                        Configure how you receive SLA alerts and notifications
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    {/* In-App Notifications */}
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                            <Label className="flex items-center gap-2">
+                                <Bell className="h-4 w-4 text-muted-foreground" />
+                                In-App Notifications
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                                Show notification badges and alerts in the app
+                            </p>
+                        </div>
+                        <Switch
+                            checked={notifSettings.inAppEnabled}
+                            onCheckedChange={(checked) => updateNotifSetting('inAppEnabled', checked)}
+                        />
+                    </div>
+
+                    {/* Email Notifications */}
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                            <Label className="flex items-center gap-2">
+                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                Email Notifications
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                                Send email alerts for at-risk and breached SLAs
+                            </p>
+                        </div>
+                        <Switch
+                            checked={notifSettings.emailEnabled}
+                            onCheckedChange={(checked) => updateNotifSetting('emailEnabled', checked)}
+                        />
+                    </div>
+
+                    {/* Sound Notifications */}
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                            <Label className="flex items-center gap-2">
+                                <Volume2 className="h-4 w-4 text-muted-foreground" />
+                                Sound Notifications
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                                Play a sound when new notifications arrive
+                            </p>
+                        </div>
+                        <Switch
+                            checked={notifSettings.soundEnabled}
+                            onCheckedChange={(checked) => updateNotifSetting('soundEnabled', checked)}
+                        />
+                    </div>
+
+                    {/* Quiet Hours */}
+                    <div className="space-y-4 pt-4 border-t">
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <Label className="flex items-center gap-2">
+                                    <Moon className="h-4 w-4 text-muted-foreground" />
+                                    Quiet Hours
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    Silence notifications during specific hours
+                                </p>
+                            </div>
+                            <Switch
+                                checked={notifSettings.quietHoursEnabled}
+                                onCheckedChange={(checked) => updateNotifSetting('quietHoursEnabled', checked)}
+                            />
+                        </div>
+
+                        {notifSettings.quietHoursEnabled && (
+                            <div className="grid grid-cols-2 gap-4 pl-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="quiet-start">Start Time</Label>
+                                    <Input
+                                        id="quiet-start"
+                                        type="time"
+                                        value={notifSettings.quietHoursStart}
+                                        onChange={(e) => updateNotifSetting('quietHoursStart', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="quiet-end">End Time</Label>
+                                    <Input
+                                        id="quiet-end"
+                                        type="time"
+                                        value={notifSettings.quietHoursEnd}
+                                        onChange={(e) => updateNotifSetting('quietHoursEnd', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Clear Notifications */}
+                    <div className="pt-4 border-t">
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <Label>Clear All Notifications</Label>
+                                <p className="text-xs text-muted-foreground">
+                                    You have {notifications.length} notifications stored
+                                </p>
+                            </div>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-destructive hover:text-destructive"
+                                onClick={() => {
+                                    if (window.confirm('Are you sure you want to clear all notifications?')) {
+                                        clearNotifications()
+                                    }
+                                }}
+                                disabled={notifications.length === 0}
+                            >
+                                <Trash2 className="h-4 w-4 mr-1" />
+                                Clear All
+                            </Button>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
 
