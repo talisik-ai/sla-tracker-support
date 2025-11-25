@@ -2,28 +2,16 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import axios from 'axios'
 
-// Helper to get environment variables at runtime
-// This is critical for serverless environments like Vercel
-function getEnvVars() {
-    const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
-    const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
-    const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
-    
-    const authHeader = JIRA_API_TOKEN && JIRA_EMAIL
-        ? `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`
-        : ''
-    
-    return { JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, authHeader }
-}
-
 export const Route = createFileRoute('/api/jira/issue/$issueKey/changelog')({
     server: {
         handlers: {
             GET: async ({ params }) => {
                 console.log('[Server Proxy] Received request for changelog:', params.issueKey)
 
-                // Read environment variables at RUNTIME (not module load time)
-                const { JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, authHeader } = getEnvVars()
+                // For Vercel/Nitro, we need to use VITE_ prefixed env vars
+                const JIRA_BASE_URL = process.env.VITE_JIRA_INSTANCE_URL
+                const JIRA_EMAIL = process.env.VITE_JIRA_EMAIL
+                const JIRA_API_TOKEN = process.env.VITE_JIRA_API_TOKEN
 
                 // Check if credentials are configured
                 if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN) {
@@ -33,6 +21,9 @@ export const Route = createFileRoute('/api/jira/issue/$issueKey/changelog')({
                         { status: 500 }
                     )
                 }
+
+                // Create auth header
+                const authHeader = `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`
 
                 const { issueKey } = params
 

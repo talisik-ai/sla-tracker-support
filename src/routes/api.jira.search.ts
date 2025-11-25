@@ -2,43 +2,19 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import axios from 'axios'
 
-// Helper to get environment variables at runtime
-// This is critical for serverless environments like Vercel
-function getEnvVars() {
-    // Log all available env var keys for debugging (not values!)
-    const allEnvKeys = Object.keys(process.env).filter(k => k.includes('JIRA') || k.includes('VITE'))
-    console.log('[Server Proxy] Available JIRA-related env vars:', allEnvKeys)
-    
-    const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
-    const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
-    const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
-    const PROJECT_KEY = process.env.JIRA_PROJECT_KEY || process.env.VITE_JIRA_PROJECT_KEY || 'SAL'
-    
-    const authHeader = JIRA_API_TOKEN && JIRA_EMAIL
-        ? `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`
-        : ''
-    
-    console.log('[Server Proxy] Resolved env vars:', {
-        hasUrl: !!JIRA_BASE_URL,
-        hasEmail: !!JIRA_EMAIL,
-        hasToken: !!JIRA_API_TOKEN,
-        hasProjectKey: !!PROJECT_KEY,
-        urlValue: JIRA_BASE_URL ? JIRA_BASE_URL.substring(0, 30) : 'MISSING',
-        emailValue: JIRA_EMAIL ? JIRA_EMAIL.substring(0, 10) + '...' : 'MISSING',
-    })
-    
-    return { JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, PROJECT_KEY, authHeader }
-}
-
 export const Route = createFileRoute('/api/jira/search')({
     server: {
         handlers: {
             GET: async ({ request }) => {
                 console.log('[Server Proxy] Received request for Jira search')
 
-                // Read environment variables at RUNTIME (not module load time)
-                // This is critical for serverless environments like Vercel
-                const { JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, PROJECT_KEY, authHeader } = getEnvVars()
+                // For Vercel/Nitro, we need to use VITE_ prefixed env vars
+                // because they are the ones that get bundled at build time
+                // Non-VITE prefixed vars are not available in the serverless runtime
+                const JIRA_BASE_URL = process.env.VITE_JIRA_INSTANCE_URL
+                const JIRA_EMAIL = process.env.VITE_JIRA_EMAIL
+                const JIRA_API_TOKEN = process.env.VITE_JIRA_API_TOKEN
+                const PROJECT_KEY = process.env.VITE_JIRA_PROJECT_KEY || 'SAL'
 
                 // Debug: Log which env vars are available (without exposing values)
                 console.log('[Server Proxy] Environment check:', {
@@ -61,6 +37,9 @@ export const Route = createFileRoute('/api/jira/search')({
                         { status: 500 }
                     )
                 }
+
+                // Create auth header
+                const authHeader = `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`
 
                 // Parse query parameters from the request URL
                 const url = new URL(request.url)

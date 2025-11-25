@@ -2,19 +2,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import axios from 'axios'
 
-// Helper to get environment variables at runtime
-// This is critical for serverless environments like Vercel
-function getEnvVars() {
-    const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
-    const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
-    const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
-    const FIELD_SLA_DUE_DATE = process.env.JIRA_CUSTOM_FIELD_SLA_DUE_DATE || process.env.VITE_JIRA_CUSTOM_FIELD_SLA_DUE_DATE
-    const FIELD_SLA_STATUS = process.env.JIRA_CUSTOM_FIELD_SLA_STATUS || process.env.VITE_JIRA_CUSTOM_FIELD_SLA_STATUS
-    const FIELD_SLA_TIME_USED = process.env.JIRA_CUSTOM_FIELD_SLA_TIME_USED || process.env.VITE_JIRA_CUSTOM_FIELD_SLA_TIME_USED
-    
-    return { JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, FIELD_SLA_DUE_DATE, FIELD_SLA_STATUS, FIELD_SLA_TIME_USED }
-}
-
 export const Route = createFileRoute('/api/jira/update-sla')({
     component: () => null,
     server: {
@@ -24,8 +11,13 @@ export const Route = createFileRoute('/api/jira/update-sla')({
                     const body = await request.json()
                     const { issueKey, slaData } = body
 
-                    // Read environment variables at RUNTIME (not module load time)
-                    const { JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, FIELD_SLA_DUE_DATE, FIELD_SLA_STATUS, FIELD_SLA_TIME_USED } = getEnvVars()
+                    // For Vercel/Nitro, we need to use VITE_ prefixed env vars
+                    const JIRA_BASE_URL = process.env.VITE_JIRA_INSTANCE_URL
+                    const JIRA_EMAIL = process.env.VITE_JIRA_EMAIL
+                    const JIRA_API_TOKEN = process.env.VITE_JIRA_API_TOKEN
+                    const FIELD_SLA_DUE_DATE = process.env.VITE_JIRA_CUSTOM_FIELD_SLA_DUE_DATE
+                    const FIELD_SLA_STATUS = process.env.VITE_JIRA_CUSTOM_FIELD_SLA_STATUS
+                    const FIELD_SLA_TIME_USED = process.env.VITE_JIRA_CUSTOM_FIELD_SLA_TIME_USED
 
                     if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN) {
                         console.error('[SLA Sync] Missing Jira credentials')
