@@ -191,3 +191,80 @@ This has been fixed in the latest version. The application now uses browser-comp
 - By default, the application uses mock data
 - To switch to live Jira data, configure `.env.local` with your credentials
 - The application will automatically try live data first and fall back to mock data if credentials are missing or invalid
+
+## 🚀 Production Deployment
+
+### Option 1: Vercel (Recommended)
+
+Vercel is the recommended platform for TanStack Start applications.
+
+1. **Connect to Vercel**
+   ```bash
+   npm i -g vercel
+   vercel login
+   vercel
+   ```
+
+2. **Set Environment Variables in Vercel Dashboard**
+   - `VITE_JIRA_INSTANCE_URL`
+   - `VITE_JIRA_EMAIL`
+   - `VITE_JIRA_API_TOKEN`
+   - `VITE_JIRA_PROJECT_KEY`
+   - `RESEND_API_KEY` (for email notifications)
+
+3. **Deploy**
+   ```bash
+   vercel --prod
+   ```
+
+### Option 2: Docker (Self-Hosted)
+
+Build and run with Docker:
+
+```bash
+# Build the image
+docker build -t jira-sla-tracker \
+  --build-arg VITE_JIRA_INSTANCE_URL=https://yourcompany.atlassian.net \
+  --build-arg VITE_JIRA_PROJECT_KEY=YOUR_KEY \
+  .
+
+# Run the container
+docker run -d -p 3000:3000 \
+  -e VITE_JIRA_EMAIL=your-email@example.com \
+  -e VITE_JIRA_API_TOKEN=your-token \
+  -e RESEND_API_KEY=your-resend-key \
+  jira-sla-tracker
+```
+
+### Option 3: GitHub Actions (CI/CD)
+
+The repository includes GitHub Actions workflows:
+
+- **CI** (`.github/workflows/ci.yml`): Runs on every push/PR
+  - Runs tests
+  - Generates coverage report
+  - Builds the project
+
+- **Deploy** (`.github/workflows/deploy.yml`): Runs on push to `main`
+  - Builds and tests
+  - Deploys to Vercel
+  - Builds Docker image to GHCR
+  - Creates GitHub release
+
+#### Required GitHub Secrets
+
+| Secret | Description |
+|--------|-------------|
+| `VERCEL_TOKEN` | Vercel API token |
+| `VITE_JIRA_INSTANCE_URL` | Jira instance URL |
+| `VITE_JIRA_PROJECT_KEY` | Default project key |
+| `RESEND_API_KEY` | Resend API key for emails |
+
+### Health Check
+
+The application exposes a health endpoint:
+
+```bash
+curl http://localhost:3000/api/health
+# Returns: { "status": "healthy", "timestamp": "...", "version": "1.0.0" }
+```

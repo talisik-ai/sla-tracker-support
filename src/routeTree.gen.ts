@@ -15,6 +15,7 @@ import { Route as IssuesRouteImport } from './routes/issues'
 import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
@@ -57,6 +58,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/issues': typeof IssuesRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
   '/api/jira/update-sla': typeof ApiJiraUpdateSlaRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/issues': typeof IssuesRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
   '/api/jira/update-sla': typeof ApiJiraUpdateSlaRoute
@@ -176,6 +184,7 @@ export interface FileRoutesById {
   '/issues': typeof IssuesRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
   '/api/jira/update-sla': typeof ApiJiraUpdateSlaRoute
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/reports'
     | '/settings'
+    | '/api/health'
     | '/api/events/stream'
     | '/api/jira/search'
     | '/api/jira/update-sla'
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/reports'
     | '/settings'
+    | '/api/health'
     | '/api/events/stream'
     | '/api/jira/search'
     | '/api/jira/update-sla'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/reports'
     | '/settings'
+    | '/api/health'
     | '/api/events/stream'
     | '/api/jira/search'
     | '/api/jira/update-sla'
@@ -263,6 +275,7 @@ export interface RootRouteChildren {
   IssuesRoute: typeof IssuesRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
+  ApiHealthRoute: typeof ApiHealthRoute
   ApiEventsStreamRoute: typeof ApiEventsStreamRoute
   ApiJiraSearchRoute: typeof ApiJiraSearchRoute
   ApiJiraUpdateSlaRoute: typeof ApiJiraUpdateSlaRoute
@@ -320,6 +333,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/start/server-funcs': {
@@ -423,6 +443,7 @@ const rootRouteChildren: RootRouteChildren = {
   IssuesRoute: IssuesRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
+  ApiHealthRoute: ApiHealthRoute,
   ApiEventsStreamRoute: ApiEventsStreamRoute,
   ApiJiraSearchRoute: ApiJiraSearchRoute,
   ApiJiraUpdateSlaRoute: ApiJiraUpdateSlaRoute,
