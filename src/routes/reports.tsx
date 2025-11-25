@@ -99,7 +99,10 @@ function ReportsPage() {
 
     // Calculate Developer Performance Data
     const developerData = React.useMemo((): DeveloperReportData[] => {
-        if (issues.length === 0) return []
+        if (issues.length === 0) {
+            console.log('[Reports] No issues available for developer data')
+            return []
+        }
 
         const uniqueAssignees = new Map<string, { accountId: string, displayName: string, avatarUrl: string }>()
 
@@ -117,9 +120,12 @@ function ReportsPage() {
         })
 
         const developers = Array.from(uniqueAssignees.values())
+        console.log('[Reports] Found developers:', developers.length, developers.map(d => d.displayName))
+        
         const isMockData = issues.length > 0 && issues[0].issue.key.startsWith('SAL-')
 
         if (developers.length === 0 && isMockData) {
+            console.log('[Reports] Using mock developers for mock data')
             const mockDevs = [
                 { accountId: '712020:6a60519f-4318-4d04-8028-22874130099e', displayName: 'Alyssa', avatarUrl: '' },
                 { accountId: '712020:c7183664-500e-43c3-9828-565d7023199c', displayName: 'Kim', avatarUrl: '' },
@@ -139,10 +145,21 @@ function ReportsPage() {
             }))
         }
 
-        if (developers.length === 0) return []
+        if (developers.length === 0) {
+            console.log('[Reports] No developers found, returning empty array')
+            return []
+        }
 
         const perfData = calculateDeveloperPerformance(issues, developers)
-        return perfData.map(dev => ({
+        console.log('[Reports] Calculated performance data:', perfData.map(d => ({
+            name: d.displayName,
+            totalIssues: d.totalIssues,
+            metCount: d.metCount,
+            breachedCount: d.breachedCount,
+            complianceRate: d.complianceRate
+        })))
+        
+        const reportData = perfData.map(dev => ({
             name: dev.displayName,
             totalIssues: dev.totalIssues,
             metSLA: dev.metCount,
@@ -152,6 +169,9 @@ function ReportsPage() {
             avgResponseTime: isNaN(dev.avgFirstResponseTime) ? 0 : dev.avgFirstResponseTime,
             avgResolutionTime: isNaN(dev.avgResolutionTime) ? 0 : dev.avgResolutionTime
         }))
+        
+        console.log('[Reports] Final report data:', reportData)
+        return reportData
     }, [issues])
 
     // Calculate Issue Status Data
@@ -204,6 +224,7 @@ function ReportsPage() {
                         alert('No developer data available to export.')
                         return
                     }
+                    console.log('[Reports] Exporting developer data:', developerData)
                     if (format === 'xlsx') {
                         await exportDeveloperPerformanceToExcel(developerData, `developer-performance-${timestamp}`)
                     } else if (format === 'pdf') {
