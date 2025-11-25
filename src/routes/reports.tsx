@@ -133,16 +133,22 @@ function ReportsPage() {
                 { accountId: '712020:e9423642-1718-472e-9e7f-68211043239a', displayName: 'Mabel', avatarUrl: '' },
             ]
             const perfData = calculateDeveloperPerformance(issues, mockDevs)
-            return perfData.map(dev => ({
-                name: dev.displayName,
-                totalIssues: dev.totalIssues,
-                metSLA: dev.metCount,
-                breached: dev.breachedCount,
-                atRisk: dev.atRiskCount,
-                complianceRate: isNaN(dev.complianceRate) ? 0 : dev.complianceRate,
-                avgResponseTime: isNaN(dev.avgFirstResponseTime) ? 0 : dev.avgFirstResponseTime,
-                avgResolutionTime: isNaN(dev.avgResolutionTime) ? 0 : dev.avgResolutionTime
-            }))
+            return perfData.map(dev => {
+                const devIssues = issues.filter(i => i.issue.fields.assignee?.accountId === dev.accountId)
+                const resolvedIssues = devIssues.filter(i => i.sla.isResolved)
+                const metIssues = resolvedIssues.filter(i => i.sla.resolutionStatus === 'met').length
+                
+                return {
+                    name: dev.displayName,
+                    totalIssues: devIssues.length,
+                    metSLA: metIssues,
+                    breached: dev.breachedIssues,
+                    atRisk: dev.atRiskIssues,
+                    complianceRate: isNaN(dev.slaComplianceRate) ? 0 : dev.slaComplianceRate,
+                    avgResponseTime: isNaN(dev.averageFirstResponseTime) ? 0 : dev.averageFirstResponseTime,
+                    avgResolutionTime: isNaN(dev.averageResolutionTime) ? 0 : dev.averageResolutionTime
+                }
+            })
         }
 
         if (developers.length === 0) {
@@ -151,24 +157,24 @@ function ReportsPage() {
         }
 
         const perfData = calculateDeveloperPerformance(issues, developers)
-        console.log('[Reports] Calculated performance data:', perfData.map(d => ({
-            name: d.displayName,
-            totalIssues: d.totalIssues,
-            metCount: d.metCount,
-            breachedCount: d.breachedCount,
-            complianceRate: d.complianceRate
-        })))
+        console.log('[Reports] Calculated performance data:', perfData)
         
-        const reportData = perfData.map(dev => ({
-            name: dev.displayName,
-            totalIssues: dev.totalIssues,
-            metSLA: dev.metCount,
-            breached: dev.breachedCount,
-            atRisk: dev.atRiskCount,
-            complianceRate: isNaN(dev.complianceRate) ? 0 : dev.complianceRate,
-            avgResponseTime: isNaN(dev.avgFirstResponseTime) ? 0 : dev.avgFirstResponseTime,
-            avgResolutionTime: isNaN(dev.avgResolutionTime) ? 0 : dev.avgResolutionTime
-        }))
+        const reportData = perfData.map(dev => {
+            const devIssues = issues.filter(i => i.issue.fields.assignee?.accountId === dev.accountId)
+            const resolvedIssues = devIssues.filter(i => i.sla.isResolved)
+            const metIssues = resolvedIssues.filter(i => i.sla.resolutionStatus === 'met').length
+            
+            return {
+                name: dev.displayName,
+                totalIssues: devIssues.length,
+                metSLA: metIssues,
+                breached: dev.breachedIssues,
+                atRisk: dev.atRiskIssues,
+                complianceRate: isNaN(dev.slaComplianceRate) ? 0 : dev.slaComplianceRate,
+                avgResponseTime: isNaN(dev.averageFirstResponseTime) ? 0 : dev.averageFirstResponseTime,
+                avgResolutionTime: isNaN(dev.averageResolutionTime) ? 0 : dev.averageResolutionTime
+            }
+        })
         
         console.log('[Reports] Final report data:', reportData)
         return reportData
