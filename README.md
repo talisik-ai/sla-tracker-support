@@ -206,11 +206,29 @@ Vercel is the recommended platform for TanStack Start applications.
    ```
 
 2. **Set Environment Variables in Vercel Dashboard**
-   - `VITE_JIRA_INSTANCE_URL`
-   - `VITE_JIRA_EMAIL`
-   - `VITE_JIRA_API_TOKEN`
-   - `VITE_JIRA_PROJECT_KEY`
-   - `RESEND_API_KEY` (for email notifications)
+
+   **Required - Jira Connection:**
+   | Variable | Description | Example |
+   |----------|-------------|---------|
+   | `VITE_JIRA_INSTANCE_URL` | Your Jira Cloud URL | `https://yourcompany.atlassian.net` |
+   | `VITE_JIRA_EMAIL` | Jira account email | `user@company.com` |
+   | `VITE_JIRA_API_TOKEN` | Jira API token | `ATATT3xFfGF0...` |
+   | `VITE_JIRA_PROJECT_KEY` | Default project key | `SUPPORT` |
+
+   **Optional - Custom Fields (for Jira Sync):**
+   | Variable | Description | Example |
+   |----------|-------------|---------|
+   | `VITE_JIRA_CUSTOM_FIELD_SLA_DUE_DATE` | SLA Due Date field ID | `customfield_10050` |
+   | `VITE_JIRA_CUSTOM_FIELD_SLA_STATUS` | SLA Status field ID | `customfield_10051` |
+   | `VITE_JIRA_CUSTOM_FIELD_SLA_TIME_USED` | Time Used % field ID | `customfield_10052` |
+
+   **Optional - Email Notifications:**
+   | Variable | Description | Example |
+   |----------|-------------|---------|
+   | `RESEND_API_KEY` | Resend API key for emails | `re_xxxxxxxxxx` |
+   | `VITE_SLA_ALERT_EMAIL` | Default alert recipient | `team@company.com` |
+
+   > 💡 **Note**: Custom field IDs are only needed if you want to sync SLA data back to Jira. See `docs/jira-custom-fields-setup.md` for setup instructions.
 
 3. **Deploy**
    ```bash
@@ -253,12 +271,20 @@ The repository includes GitHub Actions workflows:
 
 #### Required GitHub Secrets
 
-| Secret | Description |
-|--------|-------------|
-| `VERCEL_TOKEN` | Vercel API token |
-| `VITE_JIRA_INSTANCE_URL` | Jira instance URL |
-| `VITE_JIRA_PROJECT_KEY` | Default project key |
-| `RESEND_API_KEY` | Resend API key for emails |
+| Secret | Required | Description |
+|--------|----------|-------------|
+| `VERCEL_TOKEN` | ✅ | Vercel API token ([Get here](https://vercel.com/account/tokens)) |
+| `VITE_JIRA_INSTANCE_URL` | ✅ | Jira instance URL |
+| `VITE_JIRA_EMAIL` | ✅ | Jira account email |
+| `VITE_JIRA_API_TOKEN` | ✅ | Jira API token |
+| `VITE_JIRA_PROJECT_KEY` | ✅ | Default project key |
+| `RESEND_API_KEY` | ⚪ | Resend API key (for email notifications) |
+| `VITE_SLA_ALERT_EMAIL` | ⚪ | Default alert email recipient |
+| `VITE_JIRA_CUSTOM_FIELD_SLA_DUE_DATE` | ⚪ | Custom field ID for SLA Due Date |
+| `VITE_JIRA_CUSTOM_FIELD_SLA_STATUS` | ⚪ | Custom field ID for SLA Status |
+| `VITE_JIRA_CUSTOM_FIELD_SLA_TIME_USED` | ⚪ | Custom field ID for Time Used % |
+
+> ✅ = Required, ⚪ = Optional
 
 ### Health Check
 
