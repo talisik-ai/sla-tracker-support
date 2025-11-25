@@ -250,7 +250,7 @@ function DashboardPage() {
     return (
         <div className="p-4 md:p-8 space-y-4 md:space-y-8">
             {/* Sticky Header */}
-            <div className="sticky top-14 z-40 bg-background pb-4 border-b mb-4">
+            <div className="sticky top-14 z-40 bg-background pb-4 mb-4">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                     <div>
                         <div className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 flex items-center gap-2 flex-wrap">
@@ -352,22 +352,22 @@ function DashboardPage() {
                         <CardTitle>Critical Issues</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {issues
                                 .filter(i => i.issue.fields.priority.name === 'Critical' && !i.sla.isResolved)
                                 .map(({ issue, sla }) => (
                                     <div
                                         key={issue.id}
-                                        className="flex items-center justify-between border-b pb-4 last:border-0 cursor-pointer hover:bg-muted/50 rounded-md p-2 -m-2 transition-colors"
+                                        className="flex items-center justify-between cursor-pointer hover:bg-muted/30 rounded-lg p-3 transition-colors"
                                         onClick={() => setSelectedIssue({ issue, sla })}
                                     >
-                                        <div className="space-y-1">
+                                        <div className="space-y-1 min-w-0 flex-1">
                                             <div className="font-medium">{issue.key}</div>
                                             <div className="text-sm text-muted-foreground truncate max-w-[200px]">
                                                 {typeof issue.fields.summary === 'string' ? issue.fields.summary : 'Summary not available'}
                                             </div>
                                         </div>
-                                        <div className="w-32">
+                                        <div className="w-32 ml-4 shrink-0">
                                             <SLATimer
                                                 deadlineHours={sla.resolutionDeadline}
                                                 createdDate={sla.createdDate}
@@ -376,7 +376,7 @@ function DashboardPage() {
                                     </div>
                                 ))}
                             {issues.filter(i => i.issue.fields.priority.name === 'Critical' && !i.sla.isResolved).length === 0 && (
-                                <div className="text-sm text-muted-foreground">No active critical issues</div>
+                                <div className="text-sm text-muted-foreground py-4">No active critical issues</div>
                             )}
                         </div>
                     </CardContent>
@@ -388,22 +388,22 @@ function DashboardPage() {
                         <CardTitle>At Risk Issues</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {issues
                                 .filter(i => i.sla.isAtRisk && !i.sla.isResolved)
                                 .map(({ issue, sla }) => (
                                     <div
                                         key={issue.id}
-                                        className="flex items-center justify-between border-b pb-4 last:border-0 cursor-pointer hover:bg-muted/50 rounded-md p-2 -m-2 transition-colors"
+                                        className="flex items-center justify-between cursor-pointer hover:bg-muted/30 rounded-lg p-3 transition-colors"
                                         onClick={() => setSelectedIssue({ issue, sla })}
                                     >
-                                        <div className="space-y-1">
+                                        <div className="space-y-1 min-w-0 flex-1">
                                             <div className="font-medium">{issue.key}</div>
                                             <div className="text-sm text-muted-foreground truncate max-w-[200px]">
                                                 {typeof issue.fields.summary === 'string' ? issue.fields.summary : 'Summary not available'}
                                             </div>
                                         </div>
-                                        <div className="w-32">
+                                        <div className="w-32 ml-4 shrink-0">
                                             <SLATimer
                                                 deadlineHours={sla.resolutionDeadline}
                                                 createdDate={sla.createdDate}
@@ -412,7 +412,7 @@ function DashboardPage() {
                                     </div>
                                 ))}
                             {issues.filter(i => i.sla.isAtRisk && !i.sla.isResolved).length === 0 && (
-                                <div className="text-sm text-muted-foreground">No issues at risk</div>
+                                <div className="text-sm text-muted-foreground py-4">No issues at risk</div>
                             )}
                         </div>
                     </CardContent>

@@ -307,7 +307,7 @@ function IssuesPage() {
 
             {/* Active Filter Banner */}
             {assignee && (
-                <div className="bg-blue-50 border border-blue-200 rounded-md p-3 flex items-center justify-between text-blue-800">
+                <div className="bg-blue-50/50 border border-blue-200/50 rounded-lg p-3 flex items-center justify-between text-blue-800">
                     <div className="flex items-center gap-2">
                         <span className="font-medium">Filtering by assignee:</span>
                         <span>{name || 'Developer'}</span>
@@ -322,7 +322,7 @@ function IssuesPage() {
             )}
 
             {/* Sticky Filter Bar */}
-            <div className="sticky top-14 z-40 bg-background pb-4 space-y-6 border-b mb-6 pt-2">
+            <div className="sticky top-14 z-40 bg-background pb-4 space-y-6 mb-6 pt-2">
                 {/* Search */}
                 <div className="flex gap-4">
                     <input
@@ -363,45 +363,45 @@ function IssuesPage() {
 
                 {/* Sort Controls - Desktop */}
                 <div className="hidden md:flex gap-2 flex-wrap items-center">
-                    <span className="text-sm text-muted-foreground">Sort by:</span>
+                    <span className="text-sm text-muted-foreground mr-1">Sort by:</span>
                     <button
                         onClick={() => handleSort('sla')}
-                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'sla' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                        className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer ${sortBy === 'sla' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/50 hover:bg-muted'
                             }`}
                     >
                         SLA Status {sortBy === 'sla' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </button>
                     <button
                         onClick={() => handleSort('key')}
-                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'key' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                        className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer ${sortBy === 'key' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/50 hover:bg-muted'
                             }`}
                     >
                         Key {sortBy === 'key' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </button>
                     <button
                         onClick={() => handleSort('priority')}
-                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'priority' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                        className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer ${sortBy === 'priority' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/50 hover:bg-muted'
                             }`}
                     >
                         Priority {sortBy === 'priority' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </button>
                     <button
                         onClick={() => handleSort('status')}
-                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'status' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                        className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer ${sortBy === 'status' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/50 hover:bg-muted'
                             }`}
                     >
                         Status {sortBy === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </button>
                     <button
                         onClick={() => handleSort('assignee')}
-                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'assignee' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                        className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer ${sortBy === 'assignee' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/50 hover:bg-muted'
                             }`}
                     >
                         Assignee {sortBy === 'assignee' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </button>
                     <button
                         onClick={() => handleSort('created')}
-                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'created' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                        className={`px-3 py-1.5 text-sm rounded-lg transition-all cursor-pointer ${sortBy === 'created' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/50 hover:bg-muted'
                             }`}
                     >
                         Created {sortBy === 'created' && (sortDirection === 'asc' ? '↑' : '↓')}
@@ -477,22 +477,22 @@ function IssuesPage() {
                 {paginatedIssues.map(({ issue, sla }) => (
                     <Card
                         key={issue.id}
-                        className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
+                        className="hover:shadow-sm hover:border-primary/20 transition-all cursor-pointer h-full flex flex-col"
                         onClick={() => setSelectedIssue({ issue, sla })}
                     >
                         <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
                             <div className="flex flex-col gap-3 flex-1">
                                 <div className="space-y-2 flex-1">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="font-mono font-medium text-primary text-sm">{issue.key}</span>
+                                        <span className="font-mono font-semibold text-primary text-sm">{issue.key}</span>
                                         <Badge variant={
                                             issue.fields.priority.name === 'Critical' ? 'destructive' :
                                                 issue.fields.priority.name === 'High' ? 'default' :
                                                     'secondary'
-                                        } className="text-xs">
+                                        } className="text-xs px-2">
                                             {issue.fields.priority.name}
                                         </Badge>
-                                        <Badge variant="outline" className="text-xs">{issue.fields.status.name}</Badge>
+                                        <span className="text-xs text-muted-foreground">{issue.fields.status.name}</span>
                                     </div>
                                     <h3 className="font-medium leading-tight text-sm sm:text-base" style={{
                                         wordBreak: 'break-word',

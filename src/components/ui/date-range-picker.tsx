@@ -37,18 +37,18 @@ export function DatePickerWithRange({
                     >
                         <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                         <span className="truncate">
-                            {date?.from ? (
-                                date.to ? (
-                                    <>
-                                        {format(date.from, "LLL dd, y")} -{" "}
-                                        {format(date.to, "LLL dd, y")}
-                                    </>
-                                ) : (
-                                    format(date.from, "LLL dd, y")
-                                )
+                        {date?.from ? (
+                            date.to ? (
+                                <>
+                                    {format(date.from, "LLL dd, y")} -{" "}
+                                    {format(date.to, "LLL dd, y")}
+                                </>
                             ) : (
+                                format(date.from, "LLL dd, y")
+                            )
+                        ) : (
                                 "Pick a date"
-                            )}
+                        )}
                         </span>
                     </Button>
                 </PopoverTrigger>
