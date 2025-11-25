@@ -77,6 +77,39 @@ You can change the project key anytime in **Settings** → **Jira Project** sect
 
 To enable real-time updates without manual refreshing, you need to configure Jira Webhooks.
 
+> **Note**: In Jira Cloud, webhooks are managed programmatically through the REST API, not through the admin UI.
+
+### Production Deployment (Vercel)
+
+Create a webhook pointing to your Vercel deployment:
+
+```bash
+curl --request POST \
+  --url https://YOUR-DOMAIN.atlassian.net/rest/api/3/webhook \
+  --user your-email@example.com:YOUR_API_TOKEN \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "url": "https://your-vercel-app.vercel.app/api/webhooks/jira",
+    "webhooks": [
+      {
+        "events": [
+          "jira:issue_created",
+          "jira:issue_updated",
+          "jira:issue_deleted"
+        ],
+        "jqlFilter": "project = YOUR_PROJECT_KEY"
+      }
+    ]
+  }'
+```
+
+Replace:
+- `YOUR-DOMAIN` with your Jira instance (e.g., `media-meter`)
+- `your-email@example.com` with your Jira email
+- `YOUR_API_TOKEN` with your Jira API token
+- `your-vercel-app` with your Vercel app name
+- `YOUR_PROJECT_KEY` with your project key (e.g., `SST`)
+
 ### Local Development (Using ngrok)
 
 Since Jira Cloud cannot reach `localhost`, you need a tunnel:
@@ -88,20 +121,44 @@ Since Jira Cloud cannot reach `localhost`, you need a tunnel:
     ```
 3.  Copy the forwarding URL (e.g., `https://your-id.ngrok-free.app`)
 
-### Configuring Jira
+4.  **Create webhook via API**:
+    ```bash
+    curl --request POST \
+      --url https://YOUR-DOMAIN.atlassian.net/rest/api/3/webhook \
+      --user your-email@example.com:YOUR_API_TOKEN \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "url": "https://your-id.ngrok-free.app/api/webhooks/jira",
+        "webhooks": [
+          {
+            "events": [
+              "jira:issue_created",
+              "jira:issue_updated",
+              "jira:issue_deleted"
+            ],
+            "jqlFilter": "project = YOUR_PROJECT_KEY"
+          }
+        ]
+      }'
+    ```
 
-1.  Go to **Jira Settings** → **System** → **Webhooks**
-2.  Click **Create a Webhook**
-3.  **Name**: `SLA Tracker Local`
-4.  **URL**: `https://your-id.ngrok-free.app/api/webhooks/jira`
-5.  **Events**: Check the following under "Issue":
-    - [x] created
-    - [x] updated
-    - [x] deleted
-6.  **JQL Filter** (Optional): `project = "YOUR_PROJECT_KEY"`
-7.  Click **Create**
+### Managing Webhooks
 
-Now, any change in Jira will instantly update your local dashboard!
+**List existing webhooks:**
+```bash
+curl --request GET \
+  --url https://YOUR-DOMAIN.atlassian.net/rest/api/3/webhook \
+  --user your-email@example.com:YOUR_API_TOKEN
+```
+
+**Delete a webhook:**
+```bash
+curl --request DELETE \
+  --url https://YOUR-DOMAIN.atlassian.net/rest/api/3/webhook/WEBHOOK_ID \
+  --user your-email@example.com:YOUR_API_TOKEN
+```
+
+Now, any change in Jira will instantly update your dashboard!
 
 ### Security Notes
 
