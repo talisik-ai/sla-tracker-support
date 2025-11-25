@@ -44,6 +44,15 @@ export default function Header() {
             >
               Developers
             </Link>
+            <Link
+              to="/reports"
+              className="transition-colors hover:text-foreground/80 text-muted-foreground"
+              activeProps={{
+                className: 'text-foreground font-semibold'
+              }}
+            >
+              Reports
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-2">
@@ -103,6 +112,16 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Developers
+            </Link>
+            <Link
+              to="/reports"
+              className="transition-colors hover:text-foreground/80 text-muted-foreground text-lg"
+              activeProps={{
+                className: 'text-foreground font-semibold'
+              }}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Reports
             </Link>
           </nav>
         </div>

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as IssuesRouteImport } from './routes/issues'
 import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -31,6 +32,11 @@ import { Route as ApiJiraIssueIssueKeyChangelogRouteImport } from './routes/api.
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IssuesRoute = IssuesRouteImport.update({
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/developers': typeof DevelopersRoute
   '/issues': typeof IssuesRoute
+  '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/developers': typeof DevelopersRoute
   '/issues': typeof IssuesRoute
+  '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/developers': typeof DevelopersRoute
   '/issues': typeof IssuesRoute
+  '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/api/events/stream': typeof ApiEventsStreamRoute
   '/api/jira/search': typeof ApiJiraSearchRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/developers'
     | '/issues'
+    | '/reports'
     | '/settings'
     | '/api/events/stream'
     | '/api/jira/search'
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/developers'
     | '/issues'
+    | '/reports'
     | '/settings'
     | '/api/events/stream'
     | '/api/jira/search'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/developers'
     | '/issues'
+    | '/reports'
     | '/settings'
     | '/api/events/stream'
     | '/api/jira/search'
@@ -249,6 +261,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DevelopersRoute: typeof DevelopersRoute
   IssuesRoute: typeof IssuesRoute
+  ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   ApiEventsStreamRoute: typeof ApiEventsStreamRoute
   ApiJiraSearchRoute: typeof ApiJiraSearchRoute
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/issues': {
@@ -401,6 +421,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DevelopersRoute: DevelopersRoute,
   IssuesRoute: IssuesRoute,
+  ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   ApiEventsStreamRoute: ApiEventsStreamRoute,
   ApiJiraSearchRoute: ApiJiraSearchRoute,
