@@ -10,7 +10,15 @@ import { MOCK_ISSUES } from '@/lib/jira/mock'
 import { getAllProjectIssues } from '@/lib/jira/api'
 import { useSLAStore } from '@/lib/sla/store'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, SlidersHorizontal, ArrowUpDown } from 'lucide-react'
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet'
 
 
 export const Route = createFileRoute('/issues')({
@@ -287,51 +295,114 @@ function IssuesPage() {
                 ))}
             </div>
 
-                {/* Sort Controls */}
-                <div className="flex gap-2 flex-wrap items-center">
-                <span className="text-sm text-muted-foreground">Sort by:</span>
-                <button
-                    onClick={() => handleSort('sla')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'sla' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
-                        }`}
-                >
-                    SLA Status {sortBy === 'sla' && (sortDirection === 'asc' ? '↑' : '↓')}
-                </button>
-                <button
-                    onClick={() => handleSort('key')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'key' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
-                        }`}
-                >
-                    Key {sortBy === 'key' && (sortDirection === 'asc' ? '↑' : '↓')}
-                </button>
-                <button
-                    onClick={() => handleSort('priority')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'priority' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
-                        }`}
-                >
-                    Priority {sortBy === 'priority' && (sortDirection === 'asc' ? '↑' : '↓')}
-                </button>
-                <button
-                    onClick={() => handleSort('status')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'status' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
-                        }`}
-                >
-                    Status {sortBy === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
-                </button>
-                <button
-                    onClick={() => handleSort('assignee')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'assignee' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
-                        }`}
-                >
-                    Assignee {sortBy === 'assignee' && (sortDirection === 'asc' ? '↑' : '↓')}
-                </button>
-                <button
-                    onClick={() => handleSort('created')}
-                    className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'created' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
-                        }`}
-                >
-                    Created {sortBy === 'created' && (sortDirection === 'asc' ? '↑' : '↓')}
-                </button>
+                {/* Sort Controls - Desktop */}
+                <div className="hidden md:flex gap-2 flex-wrap items-center">
+                    <span className="text-sm text-muted-foreground">Sort by:</span>
+                    <button
+                        onClick={() => handleSort('sla')}
+                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'sla' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                            }`}
+                    >
+                        SLA Status {sortBy === 'sla' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    </button>
+                    <button
+                        onClick={() => handleSort('key')}
+                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'key' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                            }`}
+                    >
+                        Key {sortBy === 'key' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    </button>
+                    <button
+                        onClick={() => handleSort('priority')}
+                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'priority' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                            }`}
+                    >
+                        Priority {sortBy === 'priority' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    </button>
+                    <button
+                        onClick={() => handleSort('status')}
+                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'status' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                            }`}
+                    >
+                        Status {sortBy === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    </button>
+                    <button
+                        onClick={() => handleSort('assignee')}
+                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'assignee' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                            }`}
+                    >
+                        Assignee {sortBy === 'assignee' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    </button>
+                    <button
+                        onClick={() => handleSort('created')}
+                        className={`px-3 py-1 text-sm rounded-md border transition-colors cursor-pointer ${sortBy === 'created' ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-muted'
+                            }`}
+                    >
+                        Created {sortBy === 'created' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    </button>
+                </div>
+
+                {/* Sort Controls - Mobile Drawer */}
+                <div className="md:hidden">
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="outline" size="sm" className="w-full">
+                                <ArrowUpDown className="mr-2 h-4 w-4" />
+                                Sort: {sortBy === 'sla' ? 'SLA Status' : sortBy === 'key' ? 'Key' : sortBy === 'priority' ? 'Priority' : sortBy === 'status' ? 'Status' : sortBy === 'assignee' ? 'Assignee' : 'Created'}
+                                {sortDirection === 'asc' ? ' ↑' : ' ↓'}
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="bottom" className="h-[400px]">
+                            <SheetHeader>
+                                <SheetTitle>Sort Options</SheetTitle>
+                                <SheetDescription>Choose how to sort the issues</SheetDescription>
+                            </SheetHeader>
+                            <div className="grid gap-3 py-4">
+                                <Button
+                                    variant={sortBy === 'sla' ? 'default' : 'outline'}
+                                    className="w-full justify-start"
+                                    onClick={() => handleSort('sla')}
+                                >
+                                    SLA Status {sortBy === 'sla' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </Button>
+                                <Button
+                                    variant={sortBy === 'key' ? 'default' : 'outline'}
+                                    className="w-full justify-start"
+                                    onClick={() => handleSort('key')}
+                                >
+                                    Key {sortBy === 'key' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </Button>
+                                <Button
+                                    variant={sortBy === 'priority' ? 'default' : 'outline'}
+                                    className="w-full justify-start"
+                                    onClick={() => handleSort('priority')}
+                                >
+                                    Priority {sortBy === 'priority' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </Button>
+                                <Button
+                                    variant={sortBy === 'status' ? 'default' : 'outline'}
+                                    className="w-full justify-start"
+                                    onClick={() => handleSort('status')}
+                                >
+                                    Status {sortBy === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </Button>
+                                <Button
+                                    variant={sortBy === 'assignee' ? 'default' : 'outline'}
+                                    className="w-full justify-start"
+                                    onClick={() => handleSort('assignee')}
+                                >
+                                    Assignee {sortBy === 'assignee' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </Button>
+                                <Button
+                                    variant={sortBy === 'created' ? 'default' : 'outline'}
+                                    className="w-full justify-start"
+                                    onClick={() => handleSort('created')}
+                                >
+                                    Created {sortBy === 'created' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </Button>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
                 </div>
             </div>
 
@@ -344,31 +415,35 @@ function IssuesPage() {
                         onClick={() => setSelectedIssue({ issue, sla })}
                     >
                         <CardContent className="p-4 sm:p-6">
-                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
-                                <div className="space-y-1 min-w-0 flex-1">
+                            <div className="flex flex-col gap-3">
+                                <div className="space-y-2">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="font-mono font-medium text-primary">{issue.key}</span>
+                                        <span className="font-mono font-medium text-primary text-sm">{issue.key}</span>
                                         <Badge variant={
                                             issue.fields.priority.name === 'Critical' ? 'destructive' :
                                                 issue.fields.priority.name === 'High' ? 'default' :
                                                     'secondary'
-                                        }>
+                                        } className="text-xs">
                                             {issue.fields.priority.name}
                                         </Badge>
-                                        <Badge variant="outline">{issue.fields.status.name}</Badge>
+                                        <Badge variant="outline" className="text-xs">{issue.fields.status.name}</Badge>
                                     </div>
-                                    <h3 className="font-medium leading-tight break-words overflow-wrap-anywhere">{issue.fields.summary}</h3>
-                                    <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2">
-                                        <div className="flex items-center gap-2">
+                                    <h3 className="font-medium leading-tight text-sm sm:text-base" style={{
+                                        wordBreak: 'break-word',
+                                        overflowWrap: 'break-word',
+                                        hyphens: 'auto'
+                                    }}>{issue.fields.summary}</h3>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-muted-foreground">
+                                        <div className="flex items-center gap-1.5">
                                             <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-[10px] text-white font-bold">
                                                 {issue.fields.assignee?.displayName.charAt(0) || '?'}
                                             </div>
-                                            <span>{issue.fields.assignee?.displayName || 'Unassigned'}</span>
+                                            <span className="truncate max-w-[120px]">{issue.fields.assignee?.displayName || 'Unassigned'}</span>
                                         </div>
-                                        <span>Created {new Date(issue.fields.created).toLocaleDateString()}</span>
+                                        <span className="text-xs">Created {new Date(issue.fields.created).toLocaleDateString()}</span>
                                     </div>
                                 </div>
-                                <div className="w-full sm:w-48 shrink-0">
+                                <div className="w-full">
                                     <SLATimer
                                         deadlineHours={sla.resolutionDeadline}
                                         createdDate={sla.createdDate}
