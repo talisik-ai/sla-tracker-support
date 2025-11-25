@@ -2,9 +2,10 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import axios from 'axios'
 
-const JIRA_BASE_URL = process.env.VITE_JIRA_INSTANCE_URL
-const JIRA_EMAIL = process.env.VITE_JIRA_EMAIL
-const JIRA_API_TOKEN = process.env.VITE_JIRA_API_TOKEN
+// Server-side environment variables (no VITE_ prefix for security)
+const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
+const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
+const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
 
 // Server-side base64 encoding for Node.js
 const authHeader = JIRA_API_TOKEN && JIRA_EMAIL

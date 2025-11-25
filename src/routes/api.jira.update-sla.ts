@@ -11,15 +11,15 @@ export const Route = createFileRoute('/api/jira/update-sla')({
           const body = await request.json()
           const { issueKey, slaData } = body
 
-          // Get Jira credentials from server environment
-          const JIRA_BASE_URL = process.env.VITE_JIRA_INSTANCE_URL
-          const JIRA_EMAIL = process.env.VITE_JIRA_EMAIL
-          const JIRA_API_TOKEN = process.env.VITE_JIRA_API_TOKEN
+          // Get Jira credentials from server environment (no VITE_ prefix for security)
+          const JIRA_BASE_URL = process.env.JIRA_INSTANCE_URL || process.env.VITE_JIRA_INSTANCE_URL
+          const JIRA_EMAIL = process.env.JIRA_EMAIL || process.env.VITE_JIRA_EMAIL
+          const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN || process.env.VITE_JIRA_API_TOKEN
 
           // Get custom field IDs from server environment
-          const FIELD_SLA_DUE_DATE = process.env.VITE_JIRA_CUSTOM_FIELD_SLA_DUE_DATE
-          const FIELD_SLA_STATUS = process.env.VITE_JIRA_CUSTOM_FIELD_SLA_STATUS
-          const FIELD_SLA_TIME_USED = process.env.VITE_JIRA_CUSTOM_FIELD_SLA_TIME_USED
+          const FIELD_SLA_DUE_DATE = process.env.JIRA_CUSTOM_FIELD_SLA_DUE_DATE || process.env.VITE_JIRA_CUSTOM_FIELD_SLA_DUE_DATE
+          const FIELD_SLA_STATUS = process.env.JIRA_CUSTOM_FIELD_SLA_STATUS || process.env.VITE_JIRA_CUSTOM_FIELD_SLA_STATUS
+          const FIELD_SLA_TIME_USED = process.env.JIRA_CUSTOM_FIELD_SLA_TIME_USED || process.env.VITE_JIRA_CUSTOM_FIELD_SLA_TIME_USED
 
           if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN) {
             console.error('[SLA Sync] Missing Jira credentials')
