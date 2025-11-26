@@ -2,6 +2,11 @@ import { useNotificationStore, Notification } from '@/lib/notifications/store'
 import { SLAData, JiraIssue } from '@/lib/jira/types'
 import { formatRemainingTime } from '@/lib/utils/time'
 import { SLAEmailData } from '@/lib/email/client'
+import { 
+    showSLANotification, 
+    getNativeNotificationsEnabled,
+    getNativeNotificationPermission 
+} from '@/lib/notifications/native'
 import axios from 'axios'
 
 // Deduplication: Track recent notifications to prevent duplicates
@@ -32,7 +37,7 @@ function isDuplicateNotification(key: string): boolean {
 }
 
 /**
- * Add notification with deduplication
+ * Add notification with deduplication and native notification support
  */
 function addNotificationSafe(notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) {
     const dedupKey = `${notification.title}-${notification.message}`
@@ -44,6 +49,20 @@ function addNotificationSafe(notification: Omit<Notification, 'id' | 'timestamp'
     
     const { addNotification } = useNotificationStore.getState()
     addNotification(notification)
+    
+    // Show native notification if enabled and permitted
+    if (getNativeNotificationsEnabled() && getNativeNotificationPermission() === 'granted') {
+        const nativeType = notification.type === 'error' ? 'breached' 
+            : notification.type === 'warning' ? 'at-risk' 
+            : 'info'
+        
+        showSLANotification(
+            nativeType,
+            notification.title,
+            notification.message,
+            notification.link
+        )
+    }
 }
 
 /**
@@ -185,6 +204,7 @@ export interface NotificationSettings {
     inAppEnabled: boolean
     emailEnabled: boolean
     soundEnabled: boolean
+    nativeEnabled: boolean
     quietHoursEnabled: boolean
     quietHoursStart: string // "22:00"
     quietHoursEnd: string   // "08:00"
@@ -194,6 +214,7 @@ const DEFAULT_SETTINGS: NotificationSettings = {
     inAppEnabled: true,
     emailEnabled: true,
     soundEnabled: false,
+    nativeEnabled: false,
     quietHoursEnabled: false,
     quietHoursStart: '22:00',
     quietHoursEnd: '08:00'

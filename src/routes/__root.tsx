@@ -4,6 +4,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Header from '../components/Header'
 import { ErrorBoundary } from '../components/ErrorBoundary'
+import { PWAInstallPrompt, PWAUpdatePrompt, NotificationHandler } from '../components/pwa'
 
 import appCss from '../styles.css?url'
 import scrollbarCss from '../styles/scrollbar.css?url'
@@ -16,10 +17,34 @@ export const Route = createRootRoute({
       },
       {
         name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        content: 'width=device-width, initial-scale=1, viewport-fit=cover',
       },
       {
         title: 'SLA Tracker',
+      },
+      {
+        name: 'description',
+        content: 'Track and manage Jira issues with SLA compliance monitoring',
+      },
+      {
+        name: 'theme-color',
+        content: '#0f172a',
+      },
+      {
+        name: 'apple-mobile-web-app-capable',
+        content: 'yes',
+      },
+      {
+        name: 'apple-mobile-web-app-status-bar-style',
+        content: 'black-translucent',
+      },
+      {
+        name: 'apple-mobile-web-app-title',
+        content: 'SLA Tracker',
+      },
+      {
+        name: 'mobile-web-app-capable',
+        content: 'yes',
       },
     ],
     links: [
@@ -30,6 +55,14 @@ export const Route = createRootRoute({
       {
         rel: 'stylesheet',
         href: scrollbarCss,
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.webmanifest',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/logo192.png',
       },
     ],
   }),
@@ -56,6 +89,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ErrorBoundary>
           <Header />
           {children}
+          <PWAInstallPrompt />
+          <PWAUpdatePrompt />
+          <NotificationHandler />
           <TanStackDevtools
             config={{
               position: 'bottom-right',

@@ -1,6 +1,7 @@
 {
-  "short_name": "TanStack App",
-  "name": "Create TanStack App Sample",
+  "name": "SLA Tracker - Jira Issue Management",
+  "short_name": "SLA Tracker",
+  "description": "Track and manage Jira issues with SLA compliance monitoring",
   "icons": [
     {
       "src": "favicon.ico",
@@ -16,10 +17,19 @@
       "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "categories": ["productivity", "business", "utilities"]
 }

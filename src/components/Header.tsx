@@ -1,11 +1,13 @@
 import { Link } from '@tanstack/react-router'
-import { Settings, Menu, X } from 'lucide-react'
+import { Settings, Menu, X, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { NotificationBell } from '@/components/notifications/NotificationBell'
+import { usePWAInstall } from '@/components/pwa'
 import { useState } from 'react'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isInstallable, install } = usePWAInstall()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -57,6 +59,17 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />
+          {isInstallable && (
+            <Button
+              variant="ghost"
+              size="icon"
+              title="Install App"
+              onClick={install}
+              className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+            >
+              <Download className="h-5 w-5" />
+            </Button>
+          )}
           <Link to="/settings">
             <Button variant="ghost" size="icon" title="Settings">
               <Settings className="h-5 w-5" />

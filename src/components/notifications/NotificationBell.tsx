@@ -1,11 +1,19 @@
 import * as React from 'react'
-import { Bell, Trash2, Settings, Volume2, VolumeX } from 'lucide-react'
+import { Bell, Trash2, Settings, Volume2, VolumeX, BellRing, BellOff } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useNotificationStore, Notification } from '@/lib/notifications/store'
 import { getNotificationSettings, saveNotificationSettings, playNotificationSound } from '@/lib/notifications/helpers'
+import { 
+    requestNativeNotificationPermission, 
+    getNativeNotificationPermission,
+    getNativeNotificationsEnabled,
+    setNativeNotificationsEnabled,
+    showNativeNotification,
+    isNativeNotificationSupported
+} from '@/lib/notifications/native'
 import { formatDistanceToNow } from 'date-fns'
 import { Link } from '@tanstack/react-router'
 import {
@@ -24,13 +32,19 @@ export function NotificationBell() {
     const { notifications, unreadCount, markAsRead, markAllAsRead, clearNotifications } = useNotificationStore()
     const [open, setOpen] = React.useState(false)
     const [soundEnabled, setSoundEnabled] = React.useState(false)
+    const [nativeEnabled, setNativeEnabled] = React.useState(false)
+    const [nativePermission, setNativePermission] = React.useState<'default' | 'granted' | 'denied'>('default')
+    const [nativeSupported, setNativeSupported] = React.useState(false)
     const count = unreadCount()
     const prevCountRef = React.useRef(count)
 
-    // Load sound setting on mount
+    // Load settings on mount (client-side only)
     React.useEffect(() => {
         const settings = getNotificationSettings()
         setSoundEnabled(settings.soundEnabled)
+        setNativeSupported(isNativeNotificationSupported())
+        setNativeEnabled(getNativeNotificationsEnabled())
+        setNativePermission(getNativeNotificationPermission())
     }, [])
 
     // Play sound when new notifications arrive
@@ -59,6 +73,39 @@ export function NotificationBell() {
         // Play a test sound when enabling
         if (newValue) {
             playNotificationSound('info')
+        }
+    }
+
+    const toggleNativeNotifications = async () => {
+        if (!nativeSupported) {
+            console.warn('Native notifications not supported')
+            return
+        }
+
+        if (!nativeEnabled) {
+            // Enabling - need to request permission first
+            const permission = await requestNativeNotificationPermission()
+            setNativePermission(permission)
+            
+            if (permission === 'granted') {
+                setNativeEnabled(true)
+                setNativeNotificationsEnabled(true)
+                saveNotificationSettings({ nativeEnabled: true })
+                
+                // Show a test notification
+                showNativeNotification({
+                    title: '🔔 Notifications Enabled',
+                    body: 'You will now receive desktop notifications for SLA alerts',
+                    tag: 'test-notification',
+                })
+            } else if (permission === 'denied') {
+                console.warn('Native notification permission denied')
+            }
+        } else {
+            // Disabling
+            setNativeEnabled(false)
+            setNativeNotificationsEnabled(false)
+            saveNotificationSettings({ nativeEnabled: false })
         }
     }
 
@@ -92,6 +139,30 @@ export function NotificationBell() {
                 <div className="flex items-center justify-between border-b px-4 py-3">
                     <h3 className="font-semibold text-sm">Notifications</h3>
                     <div className="flex items-center gap-1">
+                        {/* Native Notifications Toggle */}
+                        {nativeSupported && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-7 w-7 ${nativeEnabled ? 'text-blue-500' : ''}`}
+                                onClick={toggleNativeNotifications}
+                                title={
+                                    nativePermission === 'denied' 
+                                        ? 'Desktop notifications blocked - enable in browser settings' 
+                                        : nativeEnabled 
+                                        ? 'Disable desktop notifications' 
+                                        : 'Enable desktop notifications'
+                                }
+                                disabled={nativePermission === 'denied'}
+                            >
+                                {nativeEnabled ? (
+                                    <BellRing className="h-4 w-4" />
+                                ) : (
+                                    <BellOff className="h-4 w-4 text-muted-foreground" />
+                                )}
+                            </Button>
+                        )}
+                        
                         {/* Sound Toggle */}
                         <Button
                             variant="ghost"
@@ -125,11 +196,11 @@ export function NotificationBell() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
-                            onClick={markAllAsRead}
-                        >
-                            Mark all as read
-                        </Button>
-                    )}
+                                onClick={markAllAsRead}
+                            >
+                                Mark all as read
+                            </Button>
+                        )}
                     </div>
                 </div>
                 <ScrollArea className="h-[400px]">
