@@ -84,11 +84,22 @@ export const Route = createRootRoute({
   ),
 })
 
+// Script to prevent theme flash on initial load
+const themeScript = `
+(function() {
+  const theme = localStorage.getItem('theme') || 'system';
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = theme === 'dark' || (theme === 'system' && systemDark);
+  if (isDark) document.documentElement.classList.add('dark');
+})();
+`
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
         <ErrorBoundary>

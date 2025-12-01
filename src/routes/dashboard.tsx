@@ -256,7 +256,7 @@ function DashboardPage() {
     }
 
     return (
-        <div className="p-4 md:p-8 space-y-4 md:space-y-8">
+        <div className="p-4 md:p-8 space-y-4 md:space-y-8 dashboard-bg min-h-screen">
             {/* Sticky Header */}
             <div className="sticky top-14 z-40 bg-background pb-4 mb-4">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
@@ -304,6 +304,7 @@ function DashboardPage() {
                     value={<AnimatedValue value={stats.total} /> as any}
                     icon={<HugeiconsIcon icon={CheckListIcon} size={24} />}
                     onClick={() => navigate({ to: '/issues' })}
+                    staggerIndex={1}
                 />
                 <MetricCard
                     title="SLA Compliance"
@@ -311,6 +312,7 @@ function DashboardPage() {
                     icon={<HugeiconsIcon icon={CheckmarkCircle02Icon} size={24} />}
                     status={stats.complianceRate >= 90 ? 'success' : stats.complianceRate >= 75 ? 'warning' : 'critical'}
                     onClick={() => navigate({ to: '/issues' })}
+                    staggerIndex={2}
                 />
                 <MetricCard
                     title="Pending Response"
@@ -318,6 +320,7 @@ function DashboardPage() {
                     icon={<HugeiconsIcon icon={Message01Icon} size={24} />}
                     status={stats.responseBreached > 0 ? 'critical' : stats.pendingResponse > 0 ? 'warning' : 'neutral'}
                     onClick={() => navigate({ to: '/issues', search: { activeTab: 'pending-response' } })}
+                    staggerIndex={3}
                 />
                 <MetricCard
                     title="At Risk"
@@ -325,6 +328,7 @@ function DashboardPage() {
                     icon={<HugeiconsIcon icon={AlertCircleIcon} size={24} />}
                     status={stats.atRisk > 0 ? 'warning' : 'neutral'}
                     onClick={() => navigate({ to: '/issues', search: { activeTab: 'at-risk' } })}
+                    staggerIndex={4}
                 />
                 <MetricCard
                     title="Breached"
@@ -332,6 +336,7 @@ function DashboardPage() {
                     icon={<HugeiconsIcon icon={Alert02Icon} size={24} />}
                     status={stats.breached > 0 ? 'critical' : 'neutral'}
                     onClick={() => navigate({ to: '/issues', search: { activeTab: 'breached' } })}
+                    staggerIndex={5}
                 />
             </div>
 

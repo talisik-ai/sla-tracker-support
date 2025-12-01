@@ -13,6 +13,8 @@ interface MetricCardProps {
     }
     className?: string
     onClick?: () => void
+    /** Animation stagger index (1-6) for page load */
+    staggerIndex?: number
 }
 
 export function MetricCard({
@@ -22,43 +24,77 @@ export function MetricCard({
     icon,
     trend,
     className,
-    onClick
+    onClick,
+    staggerIndex
 }: MetricCardProps) {
     const statusColors = {
-        critical: "text-red-600",
-        warning: "text-amber-500",
-        success: "text-green-600",
+        critical: "text-red-600 dark:text-red-500",
+        warning: "text-amber-600 dark:text-amber-500",
+        success: "text-green-600 dark:text-green-500",
         neutral: "text-foreground"
+    }
+
+    const statusCardStyles = {
+        critical: "metric-card-critical animate-urgent-pulse",
+        warning: "metric-card-warning",
+        success: "metric-card-success",
+        neutral: ""
+    }
+
+    const iconStatusColors = {
+        critical: "text-red-500",
+        warning: "text-amber-500",
+        success: "text-green-500",
+        neutral: "text-muted-foreground"
     }
 
     return (
         <Card
             className={cn(
-                "overflow-hidden transition-all hover:shadow-md",
-                onClick && "cursor-pointer active:scale-95",
+                "overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5",
+                "relative",
+                onClick && "cursor-pointer active:scale-[0.98]",
+                statusCardStyles[status],
+                staggerIndex && `animate-slide-up stagger-${staggerIndex}`,
                 className
             )}
             onClick={onClick}
         >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+            {/* Subtle gradient overlay for depth */}
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/[0.02] dark:to-white/[0.02] pointer-events-none" />
+
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
+                <CardTitle className="text-sm font-medium text-muted-foreground tracking-wide uppercase text-[11px]">
                     {title}
                 </CardTitle>
-                {icon && <div className="text-muted-foreground">{icon}</div>}
+                {icon && (
+                    <div className={cn(
+                        "transition-colors",
+                        iconStatusColors[status]
+                    )}>
+                        {icon}
+                    </div>
+                )}
             </CardHeader>
-            <CardContent>
-                <div className={cn("text-2xl font-bold", statusColors[status])}>
+            <CardContent className="relative">
+                <div className={cn(
+                    "text-3xl font-bold tracking-tight font-mono tabular-nums",
+                    statusColors[status],
+                    status === 'critical' && "animate-number-glow"
+                )}>
                     {value}
                 </div>
                 {trend && (
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                         <span className={cn(
-                            trend.direction === 'up' ? "text-green-600" : "text-red-600",
-                            "font-medium"
+                            "inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold",
+                            trend.direction === 'up'
+                                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                         )}>
                             {trend.direction === 'up' ? '↑' : '↓'} {trend.percentage}%
                         </span>
-                        {' '}from last period
+                        <span className="text-muted-foreground/70">vs last period</span>
                     </p>
                 )}
             </CardContent>

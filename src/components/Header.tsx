@@ -1,20 +1,24 @@
 import { Link } from '@tanstack/react-router'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { 
+import {
   DashboardBrowsingIcon,
   Settings01Icon,
   Menu01Icon,
   Cancel01Icon,
-  Download01Icon
+  Download01Icon,
+  Sun01Icon,
+  Moon01Icon
 } from '@hugeicons/core-free-icons'
 import { Button } from '@/components/ui/button'
 import { NotificationBell } from '@/components/notifications/NotificationBell'
 import { usePWAInstall } from '@/components/pwa'
+import { useTheme } from '@/hooks/use-theme'
 import { useState } from 'react'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { isInstallable, install } = usePWAInstall()
+  const { isDark, toggleTheme, mounted } = useTheme()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -71,6 +75,29 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="relative overflow-hidden"
+          >
+            <span
+              className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+                mounted && isDark ? 'opacity-0 rotate-90 scale-0' : 'opacity-100 rotate-0 scale-100'
+              }`}
+            >
+              <HugeiconsIcon icon={Moon01Icon} size={20} className="text-slate-700" />
+            </span>
+            <span
+              className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+                mounted && isDark ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'
+              }`}
+            >
+              <HugeiconsIcon icon={Sun01Icon} size={20} className="text-yellow-500" />
+            </span>
+          </Button>
           {isInstallable && (
             <Button
               variant="ghost"

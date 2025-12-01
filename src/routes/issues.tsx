@@ -299,7 +299,7 @@ function IssuesPage() {
     }
 
     return (
-        <div className="p-4 md:p-8 space-y-4 md:space-y-6">
+        <div className="p-4 md:p-8 space-y-4 md:space-y-6 dashboard-bg min-h-screen">
             {/* Header */}
             <div>
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Issues</h1>
@@ -475,56 +475,87 @@ function IssuesPage() {
 
             {/* Issues List */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                {paginatedIssues.map(({ issue, sla }) => (
-                    <Card
-                        key={issue.id}
-                        className="hover:shadow-sm hover:border-primary/20 transition-all cursor-pointer h-full flex flex-col"
-                        onClick={() => setSelectedIssue({ issue, sla })}
-                    >
-                        <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
-                            <div className="flex flex-col gap-3 flex-1">
-                                <div className="space-y-2 flex-1">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="font-mono font-semibold text-primary text-sm">{issue.key}</span>
-                                        <Badge variant={
-                                            issue.fields.priority.name === 'Critical' ? 'destructive' :
-                                                issue.fields.priority.name === 'High' ? 'default' :
-                                                    'secondary'
-                                        } className="text-xs px-2">
-                                            {issue.fields.priority.name}
-                                        </Badge>
-                                        <span className="text-xs text-muted-foreground">{issue.fields.status.name}</span>
-                                    </div>
-                                    <h3 className="font-medium leading-tight text-sm sm:text-base" style={{
-                                        wordBreak: 'break-word',
-                                        overflowWrap: 'break-word',
-                                        hyphens: 'auto'
-                                    }}>{issue.fields.summary}</h3>
-                                    <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-muted-foreground">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-[10px] text-white font-bold">
-                                                {issue.fields.assignee?.displayName.charAt(0) || '?'}
-                                            </div>
-                                            <span className="truncate max-w-[120px]">{issue.fields.assignee?.displayName || 'Unassigned'}</span>
+                {paginatedIssues.map(({ issue, sla }, index) => {
+                    const priorityClass =
+                        issue.fields.priority.name === 'Critical' || issue.fields.priority.name === 'Highest' ? 'priority-critical' :
+                        issue.fields.priority.name === 'High' ? 'priority-high' :
+                        issue.fields.priority.name === 'Medium' ? 'priority-medium' : 'priority-low'
+
+                    const isUrgent = sla.isBreached || (sla.isAtRisk && !sla.isResolved)
+
+                    return (
+                        <Card
+                            key={issue.id}
+                            className={`
+                                relative overflow-hidden
+                                hover:shadow-md hover:border-primary/20 hover:-translate-y-0.5
+                                transition-all duration-200 cursor-pointer h-full flex flex-col
+                                ${priorityClass}
+                                ${isUrgent ? 'ring-1 ring-red-200 dark:ring-red-900/50' : ''}
+                                animate-slide-up
+                            `}
+                            style={{ animationDelay: `${(index % 9) * 30}ms` }}
+                            onClick={() => setSelectedIssue({ issue, sla })}
+                        >
+                            <CardContent className="p-4 sm:p-6 flex-1 flex flex-col pl-5">
+                                <div className="flex flex-col gap-3 flex-1">
+                                    <div className="space-y-2 flex-1">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="font-mono font-semibold text-primary text-sm tracking-tight">{issue.key}</span>
+                                            <Badge variant={
+                                                issue.fields.priority.name === 'Critical' || issue.fields.priority.name === 'Highest' ? 'destructive' :
+                                                    issue.fields.priority.name === 'High' ? 'default' :
+                                                        'secondary'
+                                            } className="text-[10px] px-2 py-0 h-5 font-medium">
+                                                {issue.fields.priority.name}
+                                            </Badge>
+                                            <span className="text-[10px] text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
+                                                {issue.fields.status.name}
+                                            </span>
                                         </div>
-                                        <span className="text-xs">Created {new Date(issue.fields.created).toLocaleDateString()}</span>
+                                        <h3 className="font-medium leading-tight text-sm sm:text-base line-clamp-2" style={{
+                                            wordBreak: 'break-word',
+                                            overflowWrap: 'break-word',
+                                            hyphens: 'auto'
+                                        }}>{issue.fields.summary}</h3>
+                                        <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-muted-foreground">
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-[10px] text-white font-bold shadow-sm">
+                                                    {issue.fields.assignee?.displayName.charAt(0) || '?'}
+                                                </div>
+                                                <span className="truncate max-w-[120px] text-xs">{issue.fields.assignee?.displayName || 'Unassigned'}</span>
+                                            </div>
+                                            <span className="text-[10px] text-muted-foreground/70">
+                                                {new Date(issue.fields.created).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="w-full pt-1">
+                                        <SLATimer
+                                            deadlineHours={sla.resolutionDeadline}
+                                            createdDate={sla.createdDate}
+                                            resolvedDate={sla.resolutionDate}
+                                        />
                                     </div>
                                 </div>
-                                <div className="w-full">
-                                    <SLATimer
-                                        deadlineHours={sla.resolutionDeadline}
-                                        createdDate={sla.createdDate}
-                                        resolvedDate={sla.resolutionDate}
-                                    />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
+                            </CardContent>
+                        </Card>
+                    )
+                })}
 
                 {paginatedIssues.length === 0 && (
-                    <div className="text-center py-12 text-muted-foreground">
-                        No issues found matching your filters.
+                    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                        <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4 animate-slide-up">
+                            <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2 animate-slide-up stagger-1">No Issues Found</h3>
+                        <p className="text-muted-foreground max-w-sm animate-slide-up stagger-2">
+                            {searchQuery || activeTab !== 'all'
+                                ? "No issues match your current filters. Try adjusting your search or filter criteria."
+                                : "All clear! No issues to display."}
+                        </p>
                     </div>
                 )}
             </div>
