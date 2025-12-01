@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getIssueChangelog } from '@/lib/jira/api'
-import { History, User, Calendar } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Clock04Icon, UserIcon, Calendar01Icon } from '@hugeicons/core-free-icons'
 
 interface ChangelogEntry {
     id: string
@@ -85,7 +86,7 @@ export function IssueChangelog({ issueKey }: IssueChangelogProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm font-medium">
-                <History className="h-4 w-4" />
+                <HugeiconsIcon icon={Clock04Icon} size={16} />
                 <span>Change History ({changelog.length})</span>
             </div>
 
@@ -94,11 +95,11 @@ export function IssueChangelog({ issueKey }: IssueChangelogProps) {
                     <div key={entry.id} className="border-l-2 border-muted pl-4 pb-3">
                         <div className="flex items-start justify-between gap-2 mb-2">
                             <div className="flex items-center gap-2 text-sm">
-                                <User className="h-3 w-3 text-muted-foreground" />
+                                <HugeiconsIcon icon={UserIcon} size={12} className="text-muted-foreground" />
                                 <span className="font-medium">{entry.author.displayName}</span>
                             </div>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
+                                <HugeiconsIcon icon={Calendar01Icon} size={12} />
                                 <time>{new Date(entry.created).toLocaleString()}</time>
                             </div>
                         </div>

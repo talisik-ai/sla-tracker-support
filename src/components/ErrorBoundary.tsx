@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Alert02Icon, RefreshIcon, Home01Icon } from '@hugeicons/core-free-icons'
 import { Button } from './ui/button'
 import { Card } from './ui/card'
 
@@ -47,7 +48,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
           <Card className="max-w-2xl w-full p-8">
             <div className="flex items-start gap-4">
-              <AlertTriangle className="h-10 w-10 text-red-500" />
+              <HugeiconsIcon icon={Alert02Icon} size={40} className="text-red-500" />
               <div className="flex-1">
                 <h1 className="text-2xl font-bold mb-2">Something went wrong</h1>
                 <p className="text-gray-600 mb-6">
@@ -55,11 +56,11 @@ export class ErrorBoundary extends Component<Props, State> {
                 </p>
                 <div className="flex gap-3">
                   <Button onClick={this.handleReset}>
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                    <HugeiconsIcon icon={RefreshIcon} size={16} className="mr-2" />
                     Try Again
                   </Button>
                   <Button onClick={() => (window.location.href = '/')} variant="outline">
-                    <Home className="h-4 w-4 mr-2" />
+                    <HugeiconsIcon icon={Home01Icon} size={16} className="mr-2" />
                     Go Home
                   </Button>
                 </div>

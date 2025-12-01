@@ -4,22 +4,22 @@
   "description": "Track and manage Jira issues with SLA compliance monitoring",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "sla_dashboard_icon.png",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "logo192.png",
+      "src": "sla_dashboard_icon.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "sla_dashboard_icon.png",
       "type": "image/png",
       "sizes": "512x512"
     },
     {
-      "src": "logo512.png",
+      "src": "sla_dashboard_icon.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"

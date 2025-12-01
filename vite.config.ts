@@ -24,7 +24,7 @@ const config = defineConfig({
       filename: 'sw.ts',
       registerType: 'prompt',
       outDir: '.output/public',
-      includeAssets: ['favicon.ico', 'logo192.png', 'logo512.png'],
+      includeAssets: ['favicon.ico', 'logo192.png', 'logo512.png', 'sla_dashboard_icon.png'],
       manifest: {
         name: 'SLA Tracker - Jira Issue Management',
         short_name: 'SLA Tracker',
@@ -37,17 +37,17 @@ const config = defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'logo192.png',
+            src: 'sla_dashboard_icon.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: 'logo512.png',
+            src: 'sla_dashboard_icon.png',
             sizes: '512x512',
             type: 'image/png',
           },
           {
-            src: 'logo512.png',
+            src: 'sla_dashboard_icon.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

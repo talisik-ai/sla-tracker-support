@@ -1,6 +1,7 @@
 import * as React from "react"
 import { addDays, format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Calendar01Icon } from '@hugeicons/core-free-icons'
 import { DateRange } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
@@ -35,7 +36,7 @@ export function DatePickerWithRange({
                             !date && "text-muted-foreground"
                         )}
                     >
-                        <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                        <HugeiconsIcon icon={Calendar01Icon} size={16} className="mr-2 flex-shrink-0" />
                         <span className="truncate">
                         {date?.from ? (
                             date.to ? (

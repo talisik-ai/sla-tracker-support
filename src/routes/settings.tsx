@@ -7,7 +7,20 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { RotateCcw, Plus, Trash2, Calendar, RefreshCw, CheckCircle2, AlertCircle, Bell, Mail, Volume2, Moon } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { 
+    ArrowTurnBackwardIcon, 
+    PlusSignIcon, 
+    Delete02Icon, 
+    Calendar01Icon, 
+    RefreshIcon, 
+    CheckmarkCircle01Icon, 
+    AlertCircleIcon, 
+    Notification01Icon, 
+    Mail01Icon, 
+    VolumeHighIcon, 
+    Moon02Icon 
+} from '@hugeicons/core-free-icons'
 import { bulkSyncSLAToJira, getSyncSummary, type SyncResult } from '@/lib/jira/sla-sync'
 import { getAllProjectIssues } from '@/lib/jira/api'
 import { calculateSLA } from '@/lib/sla/calculator'
@@ -166,7 +179,7 @@ function SettingsPage() {
                     <p className="text-sm text-muted-foreground">Configure SLA rules, business hours, and holidays</p>
                 </div>
                 <Button variant="outline" onClick={resetSettings} className="text-destructive hover:text-destructive">
-                    <RotateCcw className="mr-2 h-4 w-4" />
+                    <HugeiconsIcon icon={ArrowTurnBackwardIcon} size={16} className="mr-2" />
                     Reset to Defaults
                 </Button>
             </div>
@@ -298,7 +311,7 @@ function SettingsPage() {
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button className="w-full md:w-auto">
-                                        <RefreshCw className="mr-2 h-4 w-4" />
+                                        <HugeiconsIcon icon={RefreshIcon} size={16} className="mr-2" />
                                         Sync All Issues to Jira
                                     </Button>
                                 </AlertDialogTrigger>
@@ -338,9 +351,9 @@ function SettingsPage() {
                             <div className="space-y-4">
                                 <div className={`p-4 rounded-md flex items-start gap-3 ${syncResults.failed === 0 ? 'bg-green-50 text-green-900' : 'bg-amber-50 text-amber-900'}`}>
                                     {syncResults.failed === 0 ? (
-                                        <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />
+                                        <HugeiconsIcon icon={CheckmarkCircle01Icon} size={20} className="mt-0.5 text-green-600" />
                                     ) : (
-                                        <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+                                        <HugeiconsIcon icon={AlertCircleIcon} size={20} className="mt-0.5 text-amber-600" />
                                     )}
                                     <div className="space-y-1">
                                         <p className="font-medium">Sync Completed</p>
@@ -429,7 +442,7 @@ function SettingsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <Bell className="h-5 w-5" />
+                        <HugeiconsIcon icon={Notification01Icon} size={20} />
                         Notification Settings
                     </CardTitle>
                     <CardDescription>
@@ -441,7 +454,7 @@ function SettingsPage() {
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                             <Label className="flex items-center gap-2">
-                                <Bell className="h-4 w-4 text-muted-foreground" />
+                                <HugeiconsIcon icon={Notification01Icon} size={16} className="text-muted-foreground" />
                                 In-App Notifications
                             </Label>
                             <p className="text-xs text-muted-foreground">
@@ -458,7 +471,7 @@ function SettingsPage() {
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                             <Label className="flex items-center gap-2">
-                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                <HugeiconsIcon icon={Mail01Icon} size={16} className="text-muted-foreground" />
                                 Email Notifications
                             </Label>
                             <p className="text-xs text-muted-foreground">
@@ -475,7 +488,7 @@ function SettingsPage() {
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                             <Label className="flex items-center gap-2">
-                                <Volume2 className="h-4 w-4 text-muted-foreground" />
+                                <HugeiconsIcon icon={VolumeHighIcon} size={16} className="text-muted-foreground" />
                                 Sound Notifications
                             </Label>
                             <p className="text-xs text-muted-foreground">
@@ -493,7 +506,7 @@ function SettingsPage() {
                         <div className="flex items-center justify-between">
                             <div className="space-y-0.5">
                                 <Label className="flex items-center gap-2">
-                                    <Moon className="h-4 w-4 text-muted-foreground" />
+                                    <HugeiconsIcon icon={Moon02Icon} size={16} className="text-muted-foreground" />
                                     Quiet Hours
                                 </Label>
                                 <p className="text-xs text-muted-foreground">
@@ -547,7 +560,7 @@ function SettingsPage() {
                                         className="text-destructive hover:text-destructive"
                                         disabled={notifications.length === 0}
                                     >
-                                        <Trash2 className="h-4 w-4 mr-1" />
+                                        <HugeiconsIcon icon={Delete02Icon} size={16} className="mr-1" />
                                         Clear All
                                     </Button>
                                 </AlertDialogTrigger>
@@ -624,7 +637,9 @@ function SettingsPage() {
                     <CardContent className="space-y-4">
                         <div className="flex gap-2">
                             <div className="relative flex-1">
-                                <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <div className="absolute left-2.5 top-2.5">
+                                    <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-muted-foreground" />
+                                </div>
                                 <Input
                                     type="date"
                                     className="pl-9"
@@ -633,7 +648,7 @@ function SettingsPage() {
                                 />
                             </div>
                             <Button onClick={handleAddHoliday} disabled={!newHoliday}>
-                                <Plus className="h-4 w-4" />
+                                <HugeiconsIcon icon={PlusSignIcon} size={16} />
                             </Button>
                         </div>
                         <div className="border rounded-md h-[200px] overflow-y-auto p-2 space-y-1">
@@ -649,7 +664,7 @@ function SettingsPage() {
                                             className="h-6 w-6 opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive hover:bg-destructive/10"
                                             onClick={() => removeHoliday(date)}
                                         >
-                                            <Trash2 className="h-3 w-3" />
+                                            <HugeiconsIcon icon={Delete02Icon} size={12} />
                                         </Button>
                                     </div>
                                 ))

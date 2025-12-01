@@ -1,5 +1,14 @@
 import * as React from 'react'
-import { Bell, Trash2, Settings, Volume2, VolumeX, BellRing, BellOff } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { 
+    Notification01Icon, 
+    Delete02Icon, 
+    Settings01Icon, 
+    VolumeHighIcon, 
+    VolumeOffIcon, 
+    Notification03Icon, 
+    NotificationOff01Icon 
+} from '@hugeicons/core-free-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
@@ -126,7 +135,7 @@ export function NotificationBell() {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
-                    <Bell className="h-5 w-5" />
+                    <HugeiconsIcon icon={Notification01Icon} size={20} />
                     {count > 0 && (
                         <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
                             {count > 9 ? '9+' : count}
@@ -156,9 +165,9 @@ export function NotificationBell() {
                                 disabled={nativePermission === 'denied'}
                             >
                                 {nativeEnabled ? (
-                                    <BellRing className="h-4 w-4" />
+                                    <HugeiconsIcon icon={Notification03Icon} size={16} />
                                 ) : (
-                                    <BellOff className="h-4 w-4 text-muted-foreground" />
+                                    <HugeiconsIcon icon={NotificationOff01Icon} size={16} className="text-muted-foreground" />
                                 )}
                             </Button>
                         )}
@@ -172,9 +181,9 @@ export function NotificationBell() {
                             title={soundEnabled ? 'Disable sound' : 'Enable sound'}
                         >
                             {soundEnabled ? (
-                                <Volume2 className="h-4 w-4 text-muted-foreground" />
+                                <HugeiconsIcon icon={VolumeHighIcon} size={16} className="text-muted-foreground" />
                             ) : (
-                                <VolumeX className="h-4 w-4 text-muted-foreground" />
+                                <HugeiconsIcon icon={VolumeOffIcon} size={16} className="text-muted-foreground" />
                             )}
                         </Button>
                         
@@ -186,7 +195,7 @@ export function NotificationBell() {
                                 className="h-7 w-7"
                                 title="Notification settings"
                             >
-                                <Settings className="h-4 w-4 text-muted-foreground" />
+                                <HugeiconsIcon icon={Settings01Icon} size={16} className="text-muted-foreground" />
                             </Button>
                         </Link>
                         
@@ -206,7 +215,7 @@ export function NotificationBell() {
                 <ScrollArea className="h-[400px]">
                     {notifications.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-8 text-center text-sm text-muted-foreground">
-                            <Bell className="h-8 w-8 mb-2 opacity-50" />
+                            <HugeiconsIcon icon={Notification01Icon} size={32} className="mb-2 opacity-50" />
                             <p>No notifications yet</p>
                         </div>
                     ) : (
@@ -241,7 +250,7 @@ export function NotificationBell() {
                                     size="sm"
                                     className="w-full text-xs text-muted-foreground hover:text-destructive"
                                 >
-                                    <Trash2 className="h-3 w-3 mr-1" />
+                                    <HugeiconsIcon icon={Delete02Icon} size={12} className="mr-1" />
                                     Clear all notifications
                                 </Button>
                             </AlertDialogTrigger>

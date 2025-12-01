@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Download, X } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Download01Icon, Cancel01Icon } from '@hugeicons/core-free-icons'
 import { Button } from '../ui/button'
 
 interface BeforeInstallPromptEvent extends Event {
@@ -106,7 +107,7 @@ export function PWAInstallPrompt() {
       <div className="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-xl p-4 shadow-2xl">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-            <Download className="w-6 h-6 text-white" />
+            <HugeiconsIcon icon={Download01Icon} size={24} className="text-white" />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-white text-sm">
@@ -138,7 +139,7 @@ export function PWAInstallPrompt() {
             className="text-slate-500 hover:text-slate-300 transition-colors"
             aria-label="Dismiss"
           >
-            <X className="w-4 h-4" />
+            <HugeiconsIcon icon={Cancel01Icon} size={16} />
           </button>
         </div>
       </div>

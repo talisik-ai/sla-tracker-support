@@ -1,7 +1,8 @@
 import { DeveloperCard } from './DeveloperCard'
 import { DeveloperPerformance, getTeamAverages } from '@/lib/sla/developer-performance'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, TrendingUp, Clock, CheckCircle } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { UserGroupIcon, ChartIncreaseIcon, Clock01Icon, CheckmarkCircle01Icon, PlayCircleIcon } from '@hugeicons/core-free-icons'
 
 interface DeveloperGridProps {
     developers: DeveloperPerformance[]
@@ -13,11 +14,11 @@ export function DeveloperGrid({ developers }: DeveloperGridProps) {
     return (
         <div className="space-y-6 md:space-y-8">
             {/* Team Overview */}
-            <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-5">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Team Members</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{developers.length}</div>
@@ -27,7 +28,7 @@ export function DeveloperGrid({ developers }: DeveloperGridProps) {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Avg Compliance</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <HugeiconsIcon icon={ChartIncreaseIcon} size={16} className="text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className={`text-2xl font-bold ${averages.avgComplianceRate >= 90 ? 'text-green-600' : 'text-yellow-600'}`}>
@@ -39,7 +40,7 @@ export function DeveloperGrid({ developers }: DeveloperGridProps) {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Avg Response</CardTitle>
-                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <HugeiconsIcon icon={Clock01Icon} size={16} className="text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
@@ -52,8 +53,22 @@ export function DeveloperGrid({ developers }: DeveloperGridProps) {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Avg Start</CardTitle>
+                        <HugeiconsIcon icon={PlayCircleIcon} size={16} className="text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            {averages.avgStartTime < 60
+                                ? `${averages.avgStartTime.toFixed(0)}m`
+                                : `${(averages.avgStartTime / 60).toFixed(1)}h`}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Time to start</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Avg Resolution</CardTitle>
-                        <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                        <HugeiconsIcon icon={CheckmarkCircle01Icon} size={16} className="text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{averages.avgResolutionTime.toFixed(1)}h</div>

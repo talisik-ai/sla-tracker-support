@@ -10,7 +10,8 @@ import { MOCK_ISSUES } from '@/lib/jira/mock'
 import { getAllProjectIssues } from '@/lib/jira/api'
 import { useSLAStore } from '@/lib/sla/store'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
-import { ChevronLeft, ChevronRight, SlidersHorizontal, ArrowUpDown } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowLeft01Icon, ArrowRight01Icon, SlidersHorizontalIcon, ArrowUpDownIcon } from '@hugeicons/core-free-icons'
 import { SSEClient } from '@/lib/events/sse-client'
 import { useNotificationStore } from '@/lib/notifications/store'
 import {
@@ -413,7 +414,7 @@ function IssuesPage() {
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button variant="outline" size="sm" className="w-full">
-                                <ArrowUpDown className="mr-2 h-4 w-4" />
+                                <HugeiconsIcon icon={ArrowUpDownIcon} size={16} className="mr-2" />
                                 Sort: {sortBy === 'sla' ? 'SLA Status' : sortBy === 'key' ? 'Key' : sortBy === 'priority' ? 'Priority' : sortBy === 'status' ? 'Status' : sortBy === 'assignee' ? 'Assignee' : 'Created'}
                                 {sortDirection === 'asc' ? ' ↑' : ' ↓'}
                             </Button>
@@ -537,7 +538,7 @@ function IssuesPage() {
                         onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                         disabled={currentPage === 1}
                     >
-                        <ChevronLeft className="h-4 w-4" />
+                        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
                     </Button>
 
                     <div className="flex items-center gap-1 text-sm font-medium mx-2">
@@ -550,7 +551,7 @@ function IssuesPage() {
                         onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                         disabled={currentPage === totalPages}
                     >
-                        <ChevronRight className="h-4 w-4" />
+                        <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
                     </Button>
                 </div>
             )}

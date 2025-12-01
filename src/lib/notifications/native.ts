@@ -94,7 +94,7 @@ export function showNativeNotification(options: NativeNotificationOptions): Noti
   try {
     const notification = new Notification(options.title, {
       body: options.body,
-      icon: options.icon || '/logo192.png',
+      icon: options.icon || '/sla_dashboard_icon.png',
       tag: options.tag,
       requireInteraction: options.requireInteraction ?? false,
       silent: options.silent ?? false,
@@ -149,7 +149,7 @@ export async function showServiceWorkerNotification(
     
     await registration.showNotification(options.title, {
       body: options.body,
-      icon: options.icon || '/logo192.png',
+      icon: options.icon || '/sla_dashboard_icon.png',
       tag: options.tag,
       requireInteraction: options.requireInteraction ?? false,
       silent: options.silent ?? false,

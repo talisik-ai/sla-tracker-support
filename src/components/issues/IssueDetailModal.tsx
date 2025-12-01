@@ -2,7 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
-import { ExternalLink, Upload, Check, AlertCircle } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { LinkSquare02Icon, Upload01Icon, CheckmarkCircle02Icon, AlertCircleIcon } from '@hugeicons/core-free-icons'
 import { useState } from 'react'
 import { validateCustomFieldsConfigured } from '@/lib/jira/custom-fields'
 import { syncSLAToJira as performSync } from '@/lib/jira/sla-sync'
@@ -303,13 +304,13 @@ export function IssueDetailModal({ issue, sla, isOpen, onClose }: IssueDetailMod
                         {/* Sync Status Feedback */}
                         {syncStatus === 'success' && (
                             <div className="bg-green-50 text-green-700 px-3 py-2 rounded-md flex items-center gap-2 text-sm">
-                                <Check className="h-4 w-4" />
+                                <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} />
                                 SLA data synced to Jira successfully!
                             </div>
                         )}
                         {syncStatus === 'error' && (
                             <div className="bg-red-50 text-red-700 px-3 py-2 rounded-md flex items-center gap-2 text-sm">
-                                <AlertCircle className="h-4 w-4" />
+                                <HugeiconsIcon icon={AlertCircleIcon} size={16} />
                                 {syncError || 'Failed to sync to Jira'}
                             </div>
                         )}
@@ -320,7 +321,7 @@ export function IssueDetailModal({ issue, sla, isOpen, onClose }: IssueDetailMod
                                 <Button variant="outline" asChild>
                                     <a href={jiraUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                                         Open in Jira
-                                        <ExternalLink className="h-4 w-4" />
+                                        <HugeiconsIcon icon={LinkSquare02Icon} size={16} />
                                     </a>
                                 </Button>
                                 {customFieldsConfigured && (
@@ -337,7 +338,7 @@ export function IssueDetailModal({ issue, sla, isOpen, onClose }: IssueDetailMod
                                             </>
                                         ) : (
                                             <>
-                                                <Upload className="h-4 w-4" />
+                                                <HugeiconsIcon icon={Upload01Icon} size={16} />
                                                 Sync to Jira
                                             </>
                                         )}

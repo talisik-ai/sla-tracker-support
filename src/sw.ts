@@ -124,8 +124,8 @@ self.addEventListener('push', (event) => {
     
     const options: NotificationOptions = {
       body: data.body || 'New notification',
-      icon: data.icon || '/logo192.png',
-      badge: '/logo192.png',
+      icon: data.icon || '/sla_dashboard_icon.png',
+      badge: '/sla_dashboard_icon.png',
       tag: data.tag || 'sla-notification',
       requireInteraction: data.requireInteraction || false,
       data: {

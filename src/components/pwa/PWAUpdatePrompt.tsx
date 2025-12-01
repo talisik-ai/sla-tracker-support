@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { RefreshCw, X } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { RefreshIcon, Cancel01Icon } from '@hugeicons/core-free-icons'
 import { Button } from '../ui/button'
 
 export function PWAUpdatePrompt() {
@@ -61,7 +62,7 @@ export function PWAUpdatePrompt() {
       <div className="bg-gradient-to-r from-emerald-900 to-emerald-800 border border-emerald-700 rounded-xl p-4 shadow-2xl">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <RefreshCw className="w-5 h-5 text-white" />
+            <HugeiconsIcon icon={RefreshIcon} size={20} className="text-white" />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-white text-sm">Update Available</h3>
@@ -74,7 +75,7 @@ export function PWAUpdatePrompt() {
                 size="sm"
                 className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8"
               >
-                <RefreshCw className="w-3 h-3 mr-1" />
+                <HugeiconsIcon icon={RefreshIcon} size={12} className="mr-1" />
                 Update Now
               </Button>
               <Button
@@ -92,7 +93,7 @@ export function PWAUpdatePrompt() {
             className="text-emerald-400 hover:text-white transition-colors"
             aria-label="Dismiss"
           >
-            <X className="w-4 h-4" />
+            <HugeiconsIcon icon={Cancel01Icon} size={16} />
           </button>
         </div>
       </div>

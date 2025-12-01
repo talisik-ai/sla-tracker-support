@@ -61,8 +61,13 @@ export const Route = createRootRoute({
         href: '/manifest.webmanifest',
       },
       {
+        rel: 'icon',
+        type: 'image/png',
+        href: '/sla_dashboard_icon.png',
+      },
+      {
         rel: 'apple-touch-icon',
-        href: '/logo192.png',
+        href: '/sla_dashboard_icon.png',
       },
     ],
   }),

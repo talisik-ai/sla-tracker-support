@@ -1,5 +1,12 @@
 import { Link } from '@tanstack/react-router'
-import { Settings, Menu, X, Download } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { 
+  DashboardBrowsingIcon,
+  Settings01Icon,
+  Menu01Icon,
+  Cancel01Icon,
+  Download01Icon
+} from '@hugeicons/core-free-icons'
 import { Button } from '@/components/ui/button'
 import { NotificationBell } from '@/components/notifications/NotificationBell'
 import { usePWAInstall } from '@/components/pwa'
@@ -14,7 +21,12 @@ export default function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-4">
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl">📊</span>
+            <HugeiconsIcon
+              icon={DashboardBrowsingIcon}
+              size={24}
+              color="#d0021b"
+              strokeWidth={1.5}
+            />
             <span className="font-bold text-xl">SLA Tracker</span>
           </Link>
           {/* Desktop Navigation */}
@@ -67,12 +79,12 @@ export default function Header() {
               onClick={install}
               className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
             >
-              <Download className="h-5 w-5" />
+              <HugeiconsIcon icon={Download01Icon} size={20} />
             </Button>
           )}
           <Link to="/settings">
             <Button variant="ghost" size="icon" title="Settings">
-              <Settings className="h-5 w-5" />
+              <HugeiconsIcon icon={Settings01Icon} size={20} />
             </Button>
           </Link>
           {/* Mobile Menu Button */}
@@ -84,9 +96,9 @@ export default function Header() {
             title="Menu"
           >
             {mobileMenuOpen ? (
-              <X className="h-5 w-5" />
+              <HugeiconsIcon icon={Cancel01Icon} size={20} />
             ) : (
-              <Menu className="h-5 w-5" />
+              <HugeiconsIcon icon={Menu01Icon} size={20} />
             )}
           </Button>
         </div>

@@ -9,17 +9,18 @@ import { getAllProjectIssues } from '@/lib/jira/api'
 import { useSLAStore } from '@/lib/sla/store'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
 import { MOCK_ISSUES } from '@/lib/jira/mock'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { 
-    FileSpreadsheet, 
-    FileText, 
-    Download, 
-    Users, 
-    BarChart3,
-    ClipboardList,
-    TrendingUp,
-    AlertCircle,
-    CheckCircle2
-} from 'lucide-react'
+    File02Icon, 
+    File01Icon, 
+    Download01Icon, 
+    UserGroupIcon, 
+    BarChartIcon,
+    CheckListIcon,
+    ChartIncreaseIcon,
+    AlertCircleIcon,
+    CheckmarkCircle02Icon
+} from '@hugeicons/core-free-icons'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -298,7 +299,7 @@ function ReportsPage() {
                 <Card>
                     <CardContent className="p-4">
                         <div className="flex items-center gap-2 mb-2">
-                            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                            <HugeiconsIcon icon={CheckListIcon} size={16} className="text-muted-foreground" />
                             <p className="text-xs text-muted-foreground">Total Issues</p>
                         </div>
                         <p className="text-2xl font-bold">{slaSummary.totalIssues}</p>
@@ -307,7 +308,7 @@ function ReportsPage() {
                 <Card>
                     <CardContent className="p-4">
                         <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-green-600" />
                             <p className="text-xs text-muted-foreground">Met SLA</p>
                         </div>
                         <p className="text-2xl font-bold text-green-600">{slaSummary.metSLA}</p>
@@ -316,7 +317,7 @@ function ReportsPage() {
                 <Card>
                     <CardContent className="p-4">
                         <div className="flex items-center gap-2 mb-2">
-                            <AlertCircle className="h-4 w-4 text-red-600" />
+                            <HugeiconsIcon icon={AlertCircleIcon} size={16} className="text-red-600" />
                             <p className="text-xs text-muted-foreground">Breached</p>
                         </div>
                         <p className="text-2xl font-bold text-red-600">{slaSummary.breachedSLA}</p>
@@ -325,7 +326,7 @@ function ReportsPage() {
                 <Card>
                     <CardContent className="p-4">
                         <div className="flex items-center gap-2 mb-2">
-                            <TrendingUp className="h-4 w-4 text-amber-600" />
+                            <HugeiconsIcon icon={ChartIncreaseIcon} size={16} className="text-amber-600" />
                             <p className="text-xs text-muted-foreground">At Risk</p>
                         </div>
                         <p className="text-2xl font-bold text-amber-600">{slaSummary.atRiskSLA}</p>
@@ -334,7 +335,7 @@ function ReportsPage() {
                 <Card>
                     <CardContent className="p-4">
                         <div className="flex items-center gap-2 mb-2">
-                            <BarChart3 className="h-4 w-4 text-blue-600" />
+                            <HugeiconsIcon icon={BarChartIcon} size={16} className="text-blue-600" />
                             <p className="text-xs text-muted-foreground">Compliance</p>
                         </div>
                         <p className="text-2xl font-bold text-blue-600">{slaSummary.complianceRate}%</p>
@@ -348,7 +349,7 @@ function ReportsPage() {
                 <Card>
                     <CardHeader>
                         <div className="flex items-center gap-2">
-                            <BarChart3 className="h-5 w-5 text-primary" />
+                            <HugeiconsIcon icon={BarChartIcon} size={20} className="text-primary" />
                             <CardTitle>SLA Summary Report</CardTitle>
                         </div>
                         <CardDescription>
@@ -378,7 +379,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('sla-summary', 'xlsx')}
                                     disabled={exporting !== null}
                                 >
-                                    <FileSpreadsheet className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={File02Icon} size={16} className="mr-1" />
                                     {exporting === 'sla-summary-xlsx' ? 'Exporting...' : 'Excel'}
                                 </Button>
                                 <Button 
@@ -388,7 +389,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('sla-summary', 'pdf')}
                                     disabled={exporting !== null}
                                 >
-                                    <FileText className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={File01Icon} size={16} className="mr-1" />
                                     {exporting === 'sla-summary-pdf' ? 'Exporting...' : 'PDF'}
                                 </Button>
                                 <Button 
@@ -398,7 +399,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('sla-summary', 'md')}
                                     disabled={exporting !== null}
                                 >
-                                    <Download className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={Download01Icon} size={16} className="mr-1" />
                                     {exporting === 'sla-summary-md' ? 'Exporting...' : 'MD'}
                                 </Button>
                             </div>
@@ -410,7 +411,7 @@ function ReportsPage() {
                 <Card>
                     <CardHeader>
                         <div className="flex items-center gap-2">
-                            <Users className="h-5 w-5 text-primary" />
+                            <HugeiconsIcon icon={UserGroupIcon} size={20} className="text-primary" />
                             <CardTitle>Developer Performance</CardTitle>
                         </div>
                         <CardDescription>
@@ -442,7 +443,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('developer-performance', 'xlsx')}
                                     disabled={exporting !== null}
                                 >
-                                    <FileSpreadsheet className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={File02Icon} size={16} className="mr-1" />
                                     {exporting === 'developer-performance-xlsx' ? 'Exporting...' : 'Excel'}
                                 </Button>
                                 <Button 
@@ -452,7 +453,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('developer-performance', 'pdf')}
                                     disabled={exporting !== null}
                                 >
-                                    <FileText className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={File01Icon} size={16} className="mr-1" />
                                     {exporting === 'developer-performance-pdf' ? 'Exporting...' : 'PDF'}
                                 </Button>
                                 <Button 
@@ -462,7 +463,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('developer-performance', 'md')}
                                     disabled={exporting !== null}
                                 >
-                                    <Download className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={Download01Icon} size={16} className="mr-1" />
                                     {exporting === 'developer-performance-md' ? 'Exporting...' : 'MD'}
                                 </Button>
                             </div>
@@ -474,7 +475,7 @@ function ReportsPage() {
                 <Card>
                     <CardHeader>
                         <div className="flex items-center gap-2">
-                            <ClipboardList className="h-5 w-5 text-primary" />
+                            <HugeiconsIcon icon={CheckListIcon} size={20} className="text-primary" />
                             <CardTitle>Issue Status Report</CardTitle>
                         </div>
                         <CardDescription>
@@ -502,7 +503,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('issue-status', 'xlsx')}
                                     disabled={exporting !== null}
                                 >
-                                    <FileSpreadsheet className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={File02Icon} size={16} className="mr-1" />
                                     {exporting === 'issue-status-xlsx' ? 'Exporting...' : 'Excel'}
                                 </Button>
                                 <Button 
@@ -512,7 +513,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('issue-status', 'pdf')}
                                     disabled={exporting !== null}
                                 >
-                                    <FileText className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={File01Icon} size={16} className="mr-1" />
                                     {exporting === 'issue-status-pdf' ? 'Exporting...' : 'PDF'}
                                 </Button>
                                 <Button 
@@ -522,7 +523,7 @@ function ReportsPage() {
                                     onClick={() => handleExport('issue-status', 'md')}
                                     disabled={exporting !== null}
                                 >
-                                    <Download className="h-4 w-4 mr-1" />
+                                    <HugeiconsIcon icon={Download01Icon} size={16} className="mr-1" />
                                     {exporting === 'issue-status-md' ? 'Exporting...' : 'MD'}
                                 </Button>
                             </div>
@@ -535,7 +536,7 @@ function ReportsPage() {
             <Card className="border-blue-200 bg-blue-50/30">
                 <CardContent className="p-4">
                     <div className="flex gap-3">
-                        <AlertCircle className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                        <HugeiconsIcon icon={AlertCircleIcon} size={20} className="text-blue-600 shrink-0 mt-0.5" />
                         <div className="space-y-1">
                             <p className="text-sm font-medium text-blue-900">Export Information</p>
                             <p className="text-sm text-blue-800">
@@ -554,12 +555,12 @@ function ReportsPage() {
                         <AlertDialogTitle className="flex items-center gap-2">
                             {exportAlert?.type === 'error' ? (
                                 <>
-                                    <AlertCircle className="h-5 w-5 text-destructive" />
+                                    <HugeiconsIcon icon={AlertCircleIcon} size={20} className="text-destructive" />
                                     Export Failed
                                 </>
                             ) : (
                                 <>
-                                    <AlertCircle className="h-5 w-5 text-amber-500" />
+                                    <HugeiconsIcon icon={AlertCircleIcon} size={20} className="text-amber-500" />
                                     No Data Available
                                 </>
                             )}

@@ -8,7 +8,15 @@ import { calculateSLA } from '@/lib/sla/calculator'
 import { MOCK_ISSUES } from '@/lib/jira/mock'
 import { searchIssues } from '@/lib/jira/api'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
-import { RefreshCw, AlertCircle } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { 
+    RefreshIcon, 
+    AlertCircleIcon,
+    CheckListIcon,
+    CheckmarkCircle02Icon,
+    Message01Icon,
+    Alert02Icon
+} from '@hugeicons/core-free-icons'
 import { useCountUp } from '@/hooks/use-count-up'
 import { useSLAStore } from '@/lib/sla/store'
 import { batchCheckNotifications } from '@/lib/notifications/helpers'
@@ -275,7 +283,7 @@ function DashboardPage() {
                     disabled={isRefreshing}
                         className="w-full sm:w-auto"
                 >
-                    <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    <HugeiconsIcon icon={RefreshIcon} size={16} className={`mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
                         <span className="hidden sm:inline">{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
                         <span className="sm:hidden">Refresh</span>
                 </Button>
@@ -284,7 +292,7 @@ function DashboardPage() {
 
             {error && (
                 <div className="bg-destructive/15 text-destructive px-4 py-3 rounded-md flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
+                    <HugeiconsIcon icon={AlertCircleIcon} size={16} />
                     <span className="text-sm font-medium">{error}</span>
                 </div>
             )}
@@ -294,34 +302,34 @@ function DashboardPage() {
                 <MetricCard
                     title="Total Issues"
                     value={<AnimatedValue value={stats.total} /> as any}
-                    icon={<span className="text-xl">📋</span>}
+                    icon={<HugeiconsIcon icon={CheckListIcon} size={24} />}
                     onClick={() => navigate({ to: '/issues' })}
                 />
                 <MetricCard
                     title="SLA Compliance"
                     value={<AnimatedValue value={stats.complianceRate} suffix="%" /> as any}
-                    icon={<span className="text-xl">✅</span>}
+                    icon={<HugeiconsIcon icon={CheckmarkCircle02Icon} size={24} />}
                     status={stats.complianceRate >= 90 ? 'success' : stats.complianceRate >= 75 ? 'warning' : 'critical'}
                     onClick={() => navigate({ to: '/issues' })}
                 />
                 <MetricCard
                     title="Pending Response"
                     value={<AnimatedValue value={stats.pendingResponse} /> as any}
-                    icon={<span className="text-xl">💬</span>}
+                    icon={<HugeiconsIcon icon={Message01Icon} size={24} />}
                     status={stats.responseBreached > 0 ? 'critical' : stats.pendingResponse > 0 ? 'warning' : 'neutral'}
                     onClick={() => navigate({ to: '/issues', search: { activeTab: 'pending-response' } })}
                 />
                 <MetricCard
                     title="At Risk"
                     value={<AnimatedValue value={stats.atRisk} /> as any}
-                    icon={<span className="text-xl">⚠️</span>}
+                    icon={<HugeiconsIcon icon={AlertCircleIcon} size={24} />}
                     status={stats.atRisk > 0 ? 'warning' : 'neutral'}
                     onClick={() => navigate({ to: '/issues', search: { activeTab: 'at-risk' } })}
                 />
                 <MetricCard
                     title="Breached"
                     value={<AnimatedValue value={stats.breached} /> as any}
-                    icon={<span className="text-xl">🚨</span>}
+                    icon={<HugeiconsIcon icon={Alert02Icon} size={24} />}
                     status={stats.breached > 0 ? 'critical' : 'neutral'}
                     onClick={() => navigate({ to: '/issues', search: { activeTab: 'breached' } })}
                 />

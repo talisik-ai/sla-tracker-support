@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { DeveloperPerformance } from '@/lib/sla/developer-performance'
-import { Clock, CheckCircle, AlertTriangle, XCircle } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Clock01Icon, CheckmarkCircle01Icon, Alert02Icon, PlayCircleIcon } from '@hugeicons/core-free-icons'
 import { useNavigate } from '@tanstack/react-router'
 
 interface DeveloperCardProps {
@@ -68,7 +69,7 @@ export function DeveloperCard({ developer, teamAverageCompliance }: DeveloperCar
                         )}
                         {developer.atRiskIssues > 0 && (
                             <Badge variant="outline" className="h-5 px-1.5 border-yellow-500 text-yellow-600">
-                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                <HugeiconsIcon icon={Alert02Icon} size={12} className="mr-1" />
                                 {developer.atRiskIssues} Risk
                             </Badge>
                         )}
@@ -78,7 +79,7 @@ export function DeveloperCard({ developer, teamAverageCompliance }: DeveloperCar
                     <div className="grid grid-cols-2 gap-4 pt-2">
                         <div className="space-y-1">
                             <div className="text-xs text-muted-foreground flex items-center gap-1">
-                                <Clock className="h-3 w-3" /> Avg Response
+                                <HugeiconsIcon icon={Clock01Icon} size={12} /> Avg Response
                             </div>
                             <div className="font-semibold text-sm">
                                 {formatDuration(developer.averageFirstResponseTime)}
@@ -86,7 +87,15 @@ export function DeveloperCard({ developer, teamAverageCompliance }: DeveloperCar
                         </div>
                         <div className="space-y-1">
                             <div className="text-xs text-muted-foreground flex items-center gap-1">
-                                <CheckCircle className="h-3 w-3" /> Avg Resolution
+                                <HugeiconsIcon icon={PlayCircleIcon} size={12} /> Avg Start
+                            </div>
+                            <div className="font-semibold text-sm">
+                                {formatDuration(developer.averageStartTime)}
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="text-xs text-muted-foreground flex items-center gap-1">
+                                <HugeiconsIcon icon={CheckmarkCircle01Icon} size={12} /> Avg Resolution
                             </div>
                             <div className="font-semibold text-sm">
                                 {developer.averageResolutionTime.toFixed(1)}h
