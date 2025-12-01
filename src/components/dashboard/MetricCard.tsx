@@ -48,6 +48,12 @@ export function MetricCard({
         neutral: "text-muted-foreground"
     }
 
+    // Use inline style for animation delay and visibility fallback
+    const animationStyle = staggerIndex ? {
+        animationDelay: `${staggerIndex * 50}ms`,
+        opacity: 1, // Fallback to ensure visibility if CSS animation fails
+    } : {}
+
     return (
         <Card
             className={cn(
@@ -55,9 +61,10 @@ export function MetricCard({
                 "relative",
                 onClick && "cursor-pointer active:scale-[0.98]",
                 statusCardStyles[status],
-                staggerIndex && `animate-slide-up stagger-${staggerIndex}`,
+                staggerIndex && "animate-slide-up",
                 className
             )}
+            style={animationStyle}
             onClick={onClick}
         >
             {/* Subtle gradient overlay for depth */}

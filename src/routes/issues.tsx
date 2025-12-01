@@ -494,7 +494,10 @@ function IssuesPage() {
                                 ${isUrgent ? 'ring-1 ring-red-200 dark:ring-red-900/50' : ''}
                                 animate-slide-up
                             `}
-                            style={{ animationDelay: `${(index % 9) * 30}ms` }}
+                            style={{
+                                animationDelay: `${(index % 9) * 30}ms`,
+                                opacity: 1 // Fallback to ensure visibility
+                            }}
                             onClick={() => setSelectedIssue({ issue, sla })}
                         >
                             <CardContent className="p-4 sm:p-6 flex-1 flex flex-col pl-5">
@@ -545,13 +548,13 @@ function IssuesPage() {
 
                 {paginatedIssues.length === 0 && (
                     <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                        <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4 animate-slide-up">
+                        <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
                             <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 className="text-lg font-semibold mb-2 animate-slide-up stagger-1">No Issues Found</h3>
-                        <p className="text-muted-foreground max-w-sm animate-slide-up stagger-2">
+                        <h3 className="text-lg font-semibold mb-2">No Issues Found</h3>
+                        <p className="text-muted-foreground max-w-sm">
                             {searchQuery || activeTab !== 'all'
                                 ? "No issues match your current filters. Try adjusting your search or filter criteria."
                                 : "All clear! No issues to display."}

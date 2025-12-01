@@ -21,11 +21,11 @@ code, .font-mono {
    Custom Animations - Mission Control Theme
    ═══════════════════════════════════════════════════ */
 
-/* Staggered page load reveal */
+/* Staggered page load reveal - simplified for reliability */
 @keyframes slideUpFadeIn {
   from {
-    opacity: 0;
-    transform: translateY(16px);
+    opacity: 0.3;
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -34,8 +34,7 @@ code, .font-mono {
 }
 
 .animate-slide-up {
-  animation: slideUpFadeIn 0.5s ease-out forwards;
-  opacity: 0;
+  animation: slideUpFadeIn 0.4s ease-out forwards;
 }
 
 /* Stagger delays for grid items */
@@ -45,6 +44,13 @@ code, .font-mono {
 .stagger-4 { animation-delay: 200ms; }
 .stagger-5 { animation-delay: 250ms; }
 .stagger-6 { animation-delay: 300ms; }
+
+/* Fallback: ensure elements are visible if animation doesn't run */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-up {
+    animation: none;
+  }
+}
 
 /* Urgency pulse for breached/critical items */
 @keyframes urgentPulse {
