@@ -2,6 +2,7 @@ import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { MetricCard } from '@/components/dashboard/MetricCard'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { calculateSLA } from '@/lib/sla/calculator'
@@ -281,8 +282,25 @@ function ReportsPage() {
 
     if (loading) {
         return (
-            <div className="p-8 flex justify-center items-center h-full">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="p-4 md:p-8 space-y-6 md:space-y-8 dashboard-bg min-h-screen">
+                <div className="sticky top-14 z-40 backdrop-blur-md pb-4 mb-4">
+                    <Skeleton className="h-8 w-32 mb-2" />
+                    <Skeleton className="h-4 w-64" />
+                </div>
+
+                {/* Key Metrics Skeleton */}
+                <div className="grid gap-4 grid-cols-2 md:grid-cols-5">
+                    {[...Array(5)].map((_, i) => (
+                        <Skeleton key={i} className="h-24 rounded-xl" />
+                    ))}
+                </div>
+
+                {/* Report Cards Skeleton */}
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {[...Array(3)].map((_, i) => (
+                        <Skeleton key={i} className="h-64 rounded-xl" />
+                    ))}
+                </div>
             </div>
         )
     }

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { DeveloperGrid } from '@/components/developers/DeveloperGrid'
+import { Skeleton } from '@/components/ui/skeleton'
 import { calculateDeveloperPerformance } from '@/lib/sla/developer-performance'
 import { getAllProjectIssues } from '@/lib/jira/api'
 import { calculateSLA } from '@/lib/sla/calculator'
@@ -86,7 +87,28 @@ function DevelopersPage() {
   }, [issues])
 
   if (loading) {
-    return <div className="p-8">Loading developer metrics...</div>
+    return (
+      <div className="p-4 md:p-8 space-y-4 md:space-y-6 dashboard-bg min-h-screen">
+        <div className="sticky top-14 z-40 backdrop-blur-md pb-4 mb-4">
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+
+        {/* Team Overview Skeleton */}
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-5">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-24 rounded-xl" />
+          ))}
+        </div>
+
+        {/* Developer Grid Skeleton */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <Skeleton key={i} className="h-48 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (

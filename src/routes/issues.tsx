@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { SLATimer } from '@/components/issues/SLATimer'
 import { IssueDetailModal } from '@/components/issues/IssueDetailModal'
 import { calculateSLA } from '@/lib/sla/calculator'
@@ -295,7 +296,33 @@ function IssuesPage() {
     ]
 
     if (loading) {
-        return <div className="p-8">Loading issues...</div>
+        return (
+            <div className="p-4 md:p-8 space-y-4 md:space-y-6 dashboard-bg min-h-screen">
+                <div className="sticky top-14 z-40 backdrop-blur-md pb-4 mb-4">
+                    <Skeleton className="h-8 w-32 mb-2" />
+                    <Skeleton className="h-4 w-64" />
+                </div>
+
+                {/* Filter Bar Skeleton */}
+                <div className="flex gap-4 mb-6">
+                    <Skeleton className="h-10 flex-1 rounded-md" />
+                </div>
+
+                {/* Tabs Skeleton */}
+                <div className="flex gap-2 mb-6 overflow-x-auto">
+                    {[...Array(6)].map((_, i) => (
+                        <Skeleton key={i} className="h-8 w-24 rounded-full" />
+                    ))}
+                </div>
+
+                {/* Issues Grid Skeleton */}
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {[...Array(9)].map((_, i) => (
+                        <Skeleton key={i} className="h-48 rounded-xl" />
+                    ))}
+                </div>
+            </div>
+        )
     }
 
     return (

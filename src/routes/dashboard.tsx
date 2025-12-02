@@ -4,6 +4,7 @@ import { MetricCard } from '@/components/dashboard/MetricCard'
 import { SLATimer } from '@/components/issues/SLATimer'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { calculateSLA } from '@/lib/sla/calculator'
 import { MOCK_ISSUES } from '@/lib/jira/mock'
 import { searchIssues } from '@/lib/jira/api'
@@ -249,8 +250,27 @@ function DashboardPage() {
 
     if (loading && !issues.length) {
         return (
-            <div className="p-8 flex justify-center items-center h-full">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="p-4 md:p-8 space-y-4 md:space-y-8 dashboard-bg min-h-screen">
+                <div className="sticky top-14 z-40 backdrop-blur-md pb-4 mb-4 flex items-center justify-between">
+                    <div>
+                        <Skeleton className="h-4 w-32 mb-2" />
+                        <Skeleton className="h-8 w-48" />
+                    </div>
+                    <Skeleton className="h-9 w-24" />
+                </div>
+
+                {/* Metric Cards Skeleton */}
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {[...Array(4)].map((_, i) => (
+                        <Skeleton key={i} className="h-32 rounded-xl" />
+                    ))}
+                </div>
+
+                {/* Charts Skeleton */}
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                    <Skeleton className="col-span-4 h-[400px] rounded-xl" />
+                    <Skeleton className="col-span-3 h-[400px] rounded-xl" />
+                </div>
             </div>
         )
     }
