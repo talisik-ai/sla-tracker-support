@@ -15,6 +15,8 @@ interface MetricCardProps {
     onClick?: () => void
     /** Animation stagger index (1-6) for page load */
     staggerIndex?: number
+    /** Enable breathing/pulse animation (only for Breached card) */
+    breathing?: boolean
 }
 
 export function MetricCard({
@@ -25,8 +27,10 @@ export function MetricCard({
     trend,
     className,
     onClick,
-    staggerIndex
+    staggerIndex,
+    breathing = false
 }: MetricCardProps) {
+    // Text colors based on status
     const statusColors = {
         critical: "text-red-600 dark:text-red-500",
         warning: "text-amber-600 dark:text-amber-500",
@@ -34,13 +38,7 @@ export function MetricCard({
         neutral: "text-foreground"
     }
 
-    const statusCardStyles = {
-        critical: "metric-card-critical animate-urgent-pulse",
-        warning: "metric-card-warning",
-        success: "metric-card-success",
-        neutral: ""
-    }
-
+    // Icon colors based on status
     const iconStatusColors = {
         critical: "text-red-500",
         warning: "text-amber-500",
@@ -60,7 +58,8 @@ export function MetricCard({
                 "overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5",
                 "relative",
                 onClick && "cursor-pointer active:scale-[0.98]",
-                statusCardStyles[status],
+                // Only apply breathing animation to Breached card
+                breathing && "metric-card-critical animate-urgent-pulse",
                 staggerIndex && "animate-slide-up",
                 className
             )}
@@ -87,7 +86,7 @@ export function MetricCard({
                 <div className={cn(
                     "text-3xl font-bold tracking-tight font-mono tabular-nums",
                     statusColors[status],
-                    status === 'critical' && "animate-number-glow"
+                    breathing && "animate-number-glow"
                 )}>
                     {value}
                 </div>

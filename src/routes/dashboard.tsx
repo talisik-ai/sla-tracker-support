@@ -337,6 +337,7 @@ function DashboardPage() {
                     status={stats.breached > 0 ? 'critical' : 'neutral'}
                     onClick={() => navigate({ to: '/issues', search: { activeTab: 'breached' } })}
                     staggerIndex={5}
+                    breathing={stats.breached > 0}
                 />
             </div>
 
