@@ -44,7 +44,7 @@ export function DeveloperCard({ developer, teamAverageCompliance }: DeveloperCar
                         <p className="text-xs text-muted-foreground">{developer.totalActiveIssues} active issues</p>
                     </div>
                 </div>
-                <div className={`text-2xl font-bold ${getComplianceColor(developer.slaComplianceRate)}`}>
+                <div className={`text-2xl font-bold font-mono ${getComplianceColor(developer.slaComplianceRate)}`}>
                     {developer.slaComplianceRate.toFixed(0)}%
                 </div>
             </CardHeader>

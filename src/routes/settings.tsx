@@ -8,18 +8,18 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { 
-    ArrowTurnBackwardIcon, 
-    PlusSignIcon, 
-    Delete02Icon, 
-    Calendar01Icon, 
-    RefreshIcon, 
-    CheckmarkCircle01Icon, 
-    AlertCircleIcon, 
-    Notification01Icon, 
-    Mail01Icon, 
-    VolumeHighIcon, 
-    Moon02Icon 
+import {
+    ArrowTurnBackwardIcon,
+    PlusSignIcon,
+    Delete02Icon,
+    Calendar01Icon,
+    RefreshIcon,
+    CheckmarkCircle01Icon,
+    AlertCircleIcon,
+    Notification01Icon,
+    Mail01Icon,
+    VolumeHighIcon,
+    Moon02Icon
 } from '@hugeicons/core-free-icons'
 import { bulkSyncSLAToJira, getSyncSummary, type SyncResult } from '@/lib/jira/sla-sync'
 import { getAllProjectIssues } from '@/lib/jira/api'
@@ -75,7 +75,7 @@ function SettingsPage() {
         const updated = { ...notifSettings, [key]: value }
         setNotifSettings(updated)
         saveNotificationSettings({ [key]: value })
-        
+
         // Play test sound when enabling
         if (key === 'soundEnabled' && value === true) {
             playNotificationSound('info')
@@ -172,8 +172,8 @@ function SettingsPage() {
     }
 
     return (
-        <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-5xl mx-auto">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-5xl mx-auto dashboard-bg min-h-screen">
+            <div className="sticky top-14 z-40 backdrop-blur-md pb-4 mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Settings</h1>
                     <p className="text-sm text-muted-foreground">Configure SLA rules, business hours, and holidays</p>
@@ -416,7 +416,7 @@ function SettingsPage() {
                         Export your current settings to a JSON file to share with team members.
                         They can import it to use the same SLA configuration.
                     </p>
-                    
+
                     {/* Import Result Dialog */}
                     <AlertDialog open={importResult !== null} onOpenChange={(open) => !open && setImportResult(null)}>
                         <AlertDialogContent>
@@ -573,7 +573,7 @@ function SettingsPage() {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction 
+                                        <AlertDialogAction
                                             onClick={clearNotifications}
                                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                         >

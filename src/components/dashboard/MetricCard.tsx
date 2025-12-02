@@ -17,6 +17,8 @@ interface MetricCardProps {
     staggerIndex?: number
     /** Enable breathing/pulse animation (only for Breached card) */
     breathing?: boolean
+    /** Optional subtitle to display below the value */
+    subtitle?: string
 }
 
 export function MetricCard({
@@ -28,7 +30,8 @@ export function MetricCard({
     className,
     onClick,
     staggerIndex,
-    breathing = false
+    breathing = false,
+    subtitle
 }: MetricCardProps) {
     // Text colors based on status
     const statusColors = {
@@ -107,6 +110,9 @@ export function MetricCard({
                         </span>
                         <span className="text-muted-foreground/70">vs last period</span>
                     </p>
+                )}
+                {subtitle && (
+                    <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
                 )}
             </CardContent>
         </Card>

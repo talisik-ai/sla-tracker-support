@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { MetricCard } from '@/components/dashboard/MetricCard'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { calculateSLA } from '@/lib/sla/calculator'
@@ -10,11 +11,11 @@ import { useSLAStore } from '@/lib/sla/store'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
 import { MOCK_ISSUES } from '@/lib/jira/mock'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { 
-    File02Icon, 
-    File01Icon, 
-    Download01Icon, 
-    UserGroupIcon, 
+import {
+    File02Icon,
+    File01Icon,
+    Download01Icon,
+    UserGroupIcon,
     BarChartIcon,
     CheckListIcon,
     ChartIncreaseIcon,
@@ -132,7 +133,7 @@ function ReportsPage() {
 
         const developers = Array.from(uniqueAssignees.values())
         console.log('[Reports] Found developers:', developers.length, developers.map(d => d.displayName))
-        
+
         const isMockData = issues.length > 0 && issues[0].issue.key.startsWith('SAL-')
 
         if (developers.length === 0 && isMockData) {
@@ -148,7 +149,7 @@ function ReportsPage() {
                 const devIssues = issues.filter(i => i.issue.fields.assignee?.accountId === dev.accountId)
                 const resolvedIssues = devIssues.filter(i => i.sla.isResolved)
                 const metIssues = resolvedIssues.filter(i => i.sla.resolutionStatus === 'met').length
-                
+
                 return {
                     name: dev.displayName,
                     totalIssues: devIssues.length,
@@ -169,12 +170,12 @@ function ReportsPage() {
 
         const perfData = calculateDeveloperPerformance(issues, developers)
         console.log('[Reports] Calculated performance data:', perfData)
-        
+
         const reportData = perfData.map(dev => {
             const devIssues = issues.filter(i => i.issue.fields.assignee?.accountId === dev.accountId)
             const resolvedIssues = devIssues.filter(i => i.sla.isResolved)
             const metIssues = resolvedIssues.filter(i => i.sla.resolutionStatus === 'met').length
-            
+
             return {
                 name: dev.displayName,
                 totalIssues: devIssues.length,
@@ -186,7 +187,7 @@ function ReportsPage() {
                 avgResolutionTime: isNaN(dev.averageResolutionTime) ? 0 : dev.averageResolutionTime
             }
         })
-        
+
         console.log('[Reports] Final report data:', reportData)
         return reportData
     }, [issues])
@@ -194,12 +195,12 @@ function ReportsPage() {
     // Calculate Issue Status Data
     const issueData = React.useMemo((): IssueReportData[] => {
         return issues.map(({ issue, sla }) => {
-            const timeElapsed = sla.resolutionDate 
+            const timeElapsed = sla.resolutionDate
                 ? differenceInMinutes(sla.resolutionDate, sla.createdDate)
                 : differenceInMinutes(new Date(), sla.createdDate)
-            
+
             const timeRemaining = (sla.resolutionDeadline * 60) - timeElapsed
-            
+
             return {
                 key: issue.key,
                 summary: issue.fields.summary,
@@ -209,8 +210,8 @@ function ReportsPage() {
                 created: new Date(issue.fields.created).toLocaleDateString(),
                 slaStatus: sla.isBreached ? 'Breached' : sla.isAtRisk ? 'At Risk' : sla.overallStatus === 'met' ? 'Met' : 'On Track',
                 timeElapsed: `${Math.floor(timeElapsed / 60)}h ${timeElapsed % 60}m`,
-                timeRemaining: timeRemaining > 0 
-                    ? `${Math.floor(timeRemaining / 60)}h ${timeRemaining % 60}m` 
+                timeRemaining: timeRemaining > 0
+                    ? `${Math.floor(timeRemaining / 60)}h ${timeRemaining % 60}m`
                     : `Overdue by ${Math.floor(Math.abs(timeRemaining) / 60)}h ${Math.abs(timeRemaining) % 60}m`
             }
         })
@@ -218,13 +219,13 @@ function ReportsPage() {
 
     const handleExport = async (reportType: string, format: 'xlsx' | 'pdf' | 'md') => {
         setExporting(`${reportType}-${format}`)
-        
+
         try {
             // Brief delay for UX
             await new Promise(resolve => setTimeout(resolve, 300))
-            
+
             const timestamp = new Date().toISOString().split('T')[0]
-            
+
             switch (reportType) {
                 case 'sla-summary':
                     if (format === 'xlsx') {
@@ -235,7 +236,7 @@ function ReportsPage() {
                         exportSLASummaryToMarkdown(slaSummary, `sla-summary-${timestamp}`)
                     }
                     break
-                
+
                 case 'developer-performance':
                     if (developerData.length === 0) {
                         setExportAlert({ type: 'warning', message: 'No developer data available to export.' })
@@ -250,7 +251,7 @@ function ReportsPage() {
                         exportDeveloperPerformanceToMarkdown(developerData, `developer-performance-${timestamp}`)
                     }
                     break
-                
+
                 case 'issue-status':
                     if (issueData.length === 0) {
                         setExportAlert({ type: 'warning', message: 'No issue data available to export.' })
@@ -265,13 +266,13 @@ function ReportsPage() {
                     }
                     break
             }
-            
+
             console.log(`[Reports] Successfully exported ${reportType} as ${format}`)
         } catch (error) {
             console.error('[Reports] Export failed:', error)
-            setExportAlert({ 
-                type: 'error', 
-                message: `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}` 
+            setExportAlert({
+                type: 'error',
+                message: `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`
             })
         } finally {
             setExporting(null)
@@ -287,60 +288,44 @@ function ReportsPage() {
     }
 
     return (
-        <div className="p-4 md:p-8 space-y-6 md:space-y-8">
+        <div className="p-4 md:p-8 space-y-6 md:space-y-8 dashboard-bg min-h-screen">
             {/* Sticky Header */}
-            <div className="sticky top-14 z-40 bg-background pb-4 mb-4">
+            <div className="sticky top-14 z-40 backdrop-blur-md pb-4 mb-4">
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Reports</h1>
                 <p className="text-sm text-muted-foreground">Generate and export SLA reports for management and analysis</p>
             </div>
 
             {/* Key Metrics Overview */}
             <div className="grid gap-4 grid-cols-2 md:grid-cols-5">
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                            <HugeiconsIcon icon={CheckListIcon} size={16} className="text-muted-foreground" />
-                            <p className="text-xs text-muted-foreground">Total Issues</p>
-                        </div>
-                        <p className="text-2xl font-bold">{slaSummary.totalIssues}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-green-600" />
-                            <p className="text-xs text-muted-foreground">Met SLA</p>
-                        </div>
-                        <p className="text-2xl font-bold text-green-600">{slaSummary.metSLA}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                            <HugeiconsIcon icon={AlertCircleIcon} size={16} className="text-red-600" />
-                            <p className="text-xs text-muted-foreground">Breached</p>
-                        </div>
-                        <p className="text-2xl font-bold text-red-600">{slaSummary.breachedSLA}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                            <HugeiconsIcon icon={ChartIncreaseIcon} size={16} className="text-amber-600" />
-                            <p className="text-xs text-muted-foreground">At Risk</p>
-                        </div>
-                        <p className="text-2xl font-bold text-amber-600">{slaSummary.atRiskSLA}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                            <HugeiconsIcon icon={BarChartIcon} size={16} className="text-blue-600" />
-                            <p className="text-xs text-muted-foreground">Compliance</p>
-                        </div>
-                        <p className="text-2xl font-bold text-blue-600">{slaSummary.complianceRate}%</p>
-                    </CardContent>
-                </Card>
+                <MetricCard
+                    title="Total Issues"
+                    value={slaSummary.totalIssues}
+                    icon={<HugeiconsIcon icon={CheckListIcon} size={16} />}
+                />
+                <MetricCard
+                    title="Met SLA"
+                    value={slaSummary.metSLA}
+                    icon={<HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} />}
+                    status="success"
+                />
+                <MetricCard
+                    title="Breached"
+                    value={slaSummary.breachedSLA}
+                    icon={<HugeiconsIcon icon={AlertCircleIcon} size={16} />}
+                    status="critical"
+                />
+                <MetricCard
+                    title="At Risk"
+                    value={slaSummary.atRiskSLA}
+                    icon={<HugeiconsIcon icon={ChartIncreaseIcon} size={16} />}
+                    status="warning"
+                />
+                <MetricCard
+                    title="Compliance"
+                    value={`${slaSummary.complianceRate}%`}
+                    icon={<HugeiconsIcon icon={BarChartIcon} size={16} />}
+                    status="neutral"
+                />
             </div>
 
             {/* Report Cards */}
@@ -372,9 +357,9 @@ function ReportsPage() {
                         <div className="pt-2 space-y-2">
                             <p className="text-xs text-muted-foreground font-medium">Export as:</p>
                             <div className="flex gap-2">
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('sla-summary', 'xlsx')}
                                     disabled={exporting !== null}
@@ -382,9 +367,9 @@ function ReportsPage() {
                                     <HugeiconsIcon icon={File02Icon} size={16} className="mr-1" />
                                     {exporting === 'sla-summary-xlsx' ? 'Exporting...' : 'Excel'}
                                 </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('sla-summary', 'pdf')}
                                     disabled={exporting !== null}
@@ -392,9 +377,9 @@ function ReportsPage() {
                                     <HugeiconsIcon icon={File01Icon} size={16} className="mr-1" />
                                     {exporting === 'sla-summary-pdf' ? 'Exporting...' : 'PDF'}
                                 </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('sla-summary', 'md')}
                                     disabled={exporting !== null}
@@ -427,7 +412,7 @@ function ReportsPage() {
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">Avg Compliance:</span>
                                 <span className="font-medium">
-                                    {developerData.length > 0 
+                                    {developerData.length > 0
                                         ? (developerData.reduce((sum, d) => sum + d.complianceRate, 0) / developerData.length).toFixed(1)
                                         : 0}%
                                 </span>
@@ -436,9 +421,9 @@ function ReportsPage() {
                         <div className="pt-2 space-y-2">
                             <p className="text-xs text-muted-foreground font-medium">Export as:</p>
                             <div className="flex gap-2">
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('developer-performance', 'xlsx')}
                                     disabled={exporting !== null}
@@ -446,9 +431,9 @@ function ReportsPage() {
                                     <HugeiconsIcon icon={File02Icon} size={16} className="mr-1" />
                                     {exporting === 'developer-performance-xlsx' ? 'Exporting...' : 'Excel'}
                                 </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('developer-performance', 'pdf')}
                                     disabled={exporting !== null}
@@ -456,9 +441,9 @@ function ReportsPage() {
                                     <HugeiconsIcon icon={File01Icon} size={16} className="mr-1" />
                                     {exporting === 'developer-performance-pdf' ? 'Exporting...' : 'PDF'}
                                 </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('developer-performance', 'md')}
                                     disabled={exporting !== null}
@@ -496,9 +481,9 @@ function ReportsPage() {
                         <div className="pt-2 space-y-2">
                             <p className="text-xs text-muted-foreground font-medium">Export as:</p>
                             <div className="flex gap-2">
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('issue-status', 'xlsx')}
                                     disabled={exporting !== null}
@@ -506,9 +491,9 @@ function ReportsPage() {
                                     <HugeiconsIcon icon={File02Icon} size={16} className="mr-1" />
                                     {exporting === 'issue-status-xlsx' ? 'Exporting...' : 'Excel'}
                                 </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('issue-status', 'pdf')}
                                     disabled={exporting !== null}
@@ -516,9 +501,9 @@ function ReportsPage() {
                                     <HugeiconsIcon icon={File01Icon} size={16} className="mr-1" />
                                     {exporting === 'issue-status-pdf' ? 'Exporting...' : 'PDF'}
                                 </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline" 
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     className="flex-1"
                                     onClick={() => handleExport('issue-status', 'md')}
                                     disabled={exporting !== null}
@@ -533,13 +518,13 @@ function ReportsPage() {
             </div>
 
             {/* Info Box */}
-            <Card className="border-blue-200 bg-blue-50/30">
+            <Card className="border-blue-200 bg-blue-50/30 dark:border-blue-800 dark:bg-blue-950/30">
                 <CardContent className="p-4">
                     <div className="flex gap-3">
-                        <HugeiconsIcon icon={AlertCircleIcon} size={20} className="text-blue-600 shrink-0 mt-0.5" />
+                        <HugeiconsIcon icon={AlertCircleIcon} size={20} className="text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
                         <div className="space-y-1">
-                            <p className="text-sm font-medium text-blue-900">Export Information</p>
-                            <p className="text-sm text-blue-800">
+                            <p className="text-sm font-medium text-blue-900 dark:text-blue-100">Export Information</p>
+                            <p className="text-sm text-blue-800 dark:text-blue-200">
                                 Reports are generated with current data and include timestamps. Excel files provide the most detailed data,
                                 PDFs are best for printing and sharing, and Markdown files can be committed to version control or wikis.
                             </p>

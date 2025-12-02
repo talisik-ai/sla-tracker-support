@@ -300,30 +300,29 @@ function IssuesPage() {
 
     return (
         <div className="p-4 md:p-8 space-y-4 md:space-y-6 dashboard-bg min-h-screen">
-            {/* Header */}
-            <div>
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Issues</h1>
-                <p className="text-sm text-muted-foreground">View and manage all project issues</p>
-            </div>
-
-            {/* Active Filter Banner */}
-            {assignee && (
-                <div className="bg-blue-50/50 border border-blue-200/50 rounded-lg p-3 flex items-center justify-between text-blue-800">
-                    <div className="flex items-center gap-2">
-                        <span className="font-medium">Filtering by assignee:</span>
-                        <span>{name || 'Developer'}</span>
-                    </div>
-                    <button
-                        onClick={() => navigate({ to: '/issues', search: {} })}
-                        className="text-sm hover:underline font-medium cursor-pointer"
-                    >
-                        Clear Filter
-                    </button>
+            {/* Sticky Header & Filter Bar */}
+            <div className="sticky top-14 z-40 backdrop-blur-md pb-4 space-y-6 mb-6 pt-2">
+                {/* Header */}
+                <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Issues</h1>
+                    <p className="text-sm text-muted-foreground">View and manage all project issues</p>
                 </div>
-            )}
 
-            {/* Sticky Filter Bar */}
-            <div className="sticky top-14 z-40 bg-background pb-4 space-y-6 mb-6 pt-2">
+                {/* Active Filter Banner */}
+                {assignee && (
+                    <div className="bg-blue-50/50 border border-blue-200/50 rounded-lg p-3 flex items-center justify-between text-blue-800">
+                        <div className="flex items-center gap-2">
+                            <span className="font-medium">Filtering by assignee:</span>
+                            <span>{name || 'Developer'}</span>
+                        </div>
+                        <button
+                            onClick={() => navigate({ to: '/issues', search: {} })}
+                            className="text-sm hover:underline font-medium cursor-pointer"
+                        >
+                            Clear Filter
+                        </button>
+                    </div>
+                )}
                 {/* Search */}
                 <div className="flex gap-4">
                     <input
@@ -337,30 +336,30 @@ function IssuesPage() {
 
                 {/* Tabs */}
                 <div className="flex gap-2 overflow-x-auto pb-4 -mb-2 hide-scrollbar">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => {
-                            setActiveTab(tab.id)
-                            navigate({ search: (prev) => ({ ...prev, activeTab: tab.id }) })
-                        }}
-                        className={`
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => {
+                                setActiveTab(tab.id)
+                                navigate({ search: (prev) => ({ ...prev, activeTab: tab.id }) })
+                            }}
+                            className={`
                             flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap cursor-pointer
                             ${activeTab === tab.id
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-muted hover:bg-muted/80 text-muted-foreground'}
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted hover:bg-muted/80 text-muted-foreground'}
                         `}
-                    >
-                        {tab.label}
-                        <span className={`
+                        >
+                            {tab.label}
+                            <span className={`
                             ml-1 px-1.5 py-0.5 rounded-full text-xs
                             ${activeTab === tab.id ? 'bg-primary-foreground/20' : 'bg-background/50'}
                         `}>
-                            {tab.count}
-                        </span>
-                    </button>
-                ))}
-            </div>
+                                {tab.count}
+                            </span>
+                        </button>
+                    ))}
+                </div>
 
                 {/* Sort Controls - Desktop */}
                 <div className="hidden md:flex gap-2 flex-wrap items-center">
@@ -478,8 +477,8 @@ function IssuesPage() {
                 {paginatedIssues.map(({ issue, sla }, index) => {
                     const priorityClass =
                         issue.fields.priority.name === 'Critical' || issue.fields.priority.name === 'Highest' ? 'priority-critical' :
-                        issue.fields.priority.name === 'High' ? 'priority-high' :
-                        issue.fields.priority.name === 'Medium' ? 'priority-medium' : 'priority-low'
+                            issue.fields.priority.name === 'High' ? 'priority-high' :
+                                issue.fields.priority.name === 'Medium' ? 'priority-medium' : 'priority-low'
 
                     const isUrgent = sla.isBreached || (sla.isAtRisk && !sla.isResolved)
 

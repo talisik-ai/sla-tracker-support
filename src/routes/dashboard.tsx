@@ -9,8 +9,8 @@ import { MOCK_ISSUES } from '@/lib/jira/mock'
 import { searchIssues } from '@/lib/jira/api'
 import { JiraIssue, SLAData } from '@/lib/jira/types'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { 
-    RefreshIcon, 
+import {
+    RefreshIcon,
     AlertCircleIcon,
     CheckListIcon,
     CheckmarkCircle02Icon,
@@ -258,36 +258,34 @@ function DashboardPage() {
     return (
         <div className="p-4 md:p-8 space-y-4 md:space-y-8 dashboard-bg min-h-screen">
             {/* Sticky Header */}
-            <div className="sticky top-14 z-40 bg-background pb-4 mb-4">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div className="sticky top-14 z-40 backdrop-blur-md pb-4 mb-4 flex items-center justify-between">
                 <div>
-                        <div className="text-xs sm:text-sm font-medium text-muted-foreground mb-1 flex items-center gap-2 flex-wrap">
-                            <span className="truncate">{projectInfo ? `${projectInfo.name} (${projectInfo.id})` : 'Loading project info...'}</span>
-                        {/* Real-time connection indicator */}
-                        {isConnected && (
-                            <span className="flex items-center gap-1 text-green-600 text-xs">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                </span>
-                                Live
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-muted-foreground">Salina Support Test (SST)</span>
+                        <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-full">
+                            <span className="relative flex h-1.5 w-1.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
                             </span>
-                        )}
+                            Live
+                        </span>
                     </div>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
                 </div>
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => loadData()}
+                    onClick={loadData}
                     disabled={isRefreshing}
-                        className="w-full sm:w-auto"
+                    className="gap-2"
                 >
-                    <HugeiconsIcon icon={RefreshIcon} size={16} className={`mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-                        <span className="hidden sm:inline">{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
-                        <span className="sm:hidden">Refresh</span>
+                    <HugeiconsIcon
+                        icon={RefreshIcon}
+                        size={16}
+                        className={isRefreshing ? "animate-spin" : ""}
+                    />
+                    {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
                 </Button>
-                </div>
             </div>
 
             {error && (
@@ -346,15 +344,15 @@ function DashboardPage() {
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Analytics</h2>
                 <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                     <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
-                    <IssueStatusChart data={issueStatusData} />
+                        <IssueStatusChart data={issueStatusData} />
                     </React.Suspense>
                     <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
-                    <ResponseTimeChart data={responseTimeData} />
+                        <ResponseTimeChart data={responseTimeData} />
                     </React.Suspense>
                 </div>
                 <div className="grid gap-4">
                     <React.Suspense fallback={<div className="h-[300px] bg-muted/20 rounded-lg animate-pulse" />}>
-                    <SLAComplianceChart data={complianceData} />
+                        <SLAComplianceChart data={complianceData} />
                     </React.Suspense>
                 </div>
             </div>
