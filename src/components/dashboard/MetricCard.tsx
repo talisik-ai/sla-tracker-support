@@ -55,17 +55,22 @@ export function MetricCard({
     return (
         <Card
             className={cn(
-                "overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5",
+                "transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5",
                 "relative",
                 onClick && "cursor-pointer active:scale-[0.98]",
                 // Only apply breathing animation to Breached card
-                breathing && "metric-card-critical animate-urgent-pulse",
+                breathing && "metric-card-critical animate-urgent-pulse overflow-visible",
+                !breathing && "overflow-hidden",
                 staggerIndex && "animate-slide-up",
                 className
             )}
             style={animationStyle}
             onClick={onClick}
         >
+            {/* Breathing background overlay for breached state */}
+            {breathing && (
+                <div className="absolute inset-0 rounded-xl bg-red-500/[0.04] animate-breathing-bg pointer-events-none" />
+            )}
             {/* Subtle gradient overlay for depth */}
             <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/[0.02] dark:to-white/[0.02] pointer-events-none" />
 
