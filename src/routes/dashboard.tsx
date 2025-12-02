@@ -281,7 +281,9 @@ function DashboardPage() {
             <div className="sticky top-14 z-40 backdrop-blur-md pb-4 mb-4 flex items-center justify-between">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-medium text-muted-foreground">Salina Support Test (SST)</span>
+                        <span className="text-xs font-medium text-muted-foreground">
+                            {projectInfo ? `${projectInfo.name} (${projectInfo.id})` : `${projectKey} (Loading...)`}
+                        </span>
                         <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-full">
                             <span className="relative flex h-1.5 w-1.5">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
